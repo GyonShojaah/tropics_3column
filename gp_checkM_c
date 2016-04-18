@@ -1,0 +1,19 @@
+set term postscript eps enhanced color 28
+set output 'checkM_c_qTI-4_aw-0.4.eps'
+
+set title 'M_c'
+
+set xlabel 'SST_w [C]'
+set ylabel 'SST_c [C]'
+set xtics 10
+set ytics 10
+#set cbtics 10
+#set cbrange [115:155]
+
+set size square
+unset key 
+
+
+set pm3d map
+splot 'checkMSE_qTI-4_aw-0.4' us 1:2:4
+
