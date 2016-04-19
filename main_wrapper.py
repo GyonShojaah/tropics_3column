@@ -14,7 +14,7 @@ import func_to_minimize as func_to_minimize
 #import mks as unit
 #import sys
 
-OUTPUTFILE = "survey_F0.85"
+OUTPUTFILE = "survey_F0.95"
 #OUTPUTFILE = "survey_test0"
 #qq_TI_c = 4e-3
 #aa_w    = 0.4
@@ -53,11 +53,11 @@ points = np.c_[ SST_mesh_w.flatten(), SST_mesh_c.flatten() ]
 if __name__ == "__main__":
 
     
-#    aw_array = [0.33, 0.4, 0.5, 0.67]
-#    qq_array = [2e-3, 4e-3, 6e-3, 8e-3]
+    aw_array = [0.33, 0.4, 0.5, 0.67]
+    qq_array = [2e-3, 4e-3, 6e-3, 8e-3]
 
-    aw_array = [0.4]
-    qq_array = [4e-3]
+#    aw_array = [0.4]
+#    qq_array = [4e-3]
 
     with open( OUTPUTFILE, 'w') as f:
         f.write( "# aa_w \t qq_T_c \t SST_w \t SST_c \t RR_w_0 \t RR_w_1 \t RR_w_2 \t RR_c_0 \t RR_c_1 \t RR_c_2 \t MM_w \t MM_c \t SS_w \t SS_c \t EE_w \t EE_c \t residuals \n" )
