@@ -14,12 +14,12 @@ import func_to_minimize as func_to_minimize
 #import mks as unit
 #import sys
 
-OUTPUTFILE = "survey_F0.95"
+OUTPUTFILE = "survey_F0.95_MoistAdiabatCorrected"
 #OUTPUTFILE = "survey_test0"
 #qq_TI_c = 4e-3
 #aa_w    = 0.4
 
-SST0 = np.array([ 308, 4.5]) 
+SST0 = np.array([ 308, 4.5])
 #SST0 = np.array([ 293., 290.]) 
 
 #SST0   = np.array([ 290.15, 289.]) 
