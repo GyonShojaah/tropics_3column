@@ -53,7 +53,7 @@ def find_saturation_level( t_surf, q_surf ):
     """
     compute saturation level
     """
-    ratio = q_surf / mu_H2O * mu_atm
+    ratio = q_surf / MU_H2O * MU_atm
     def nulfunc( temp ):
         p_H2O = ratio * P_surf * ( temp / t_surf )**DELTA
         p_sat = CCpressure( temp )
@@ -69,7 +69,7 @@ def find_saturation_point( temp, pres, qq ):
     """
     compute saturation level
     """
-    ratio = qq / mu_H2O * mu_atm
+    ratio = qq / MU_H2O * MU_atm
     def nulfunc( t_sat ):
         p_H2O_1 = ratio * pres * ( t_sat / temp )**DELTA
         p_H2O_2 = CCpressure( t_sat )
@@ -93,9 +93,9 @@ def find_RHprof_linear_with_P( rh0, t0, z_layers, alpha ):
      =>  rh = rhs*(12.5)*pm/psurf - rhs*0.25
      => rh/rh0 = (12.5)*pm/psurf - ( ALPHA - 1. )
     RH = RH0 - ALPHA * ( 1 - exp(-z/H) )
-    SH  = ( RR * temp )/( mu_atm * gg )
+    SH  = ( RR * temp )/( MU_atm * gg )
     """
-    ScaleHeight = ( RR * t0 ) / ( mu_atm * gg )
+    ScaleHeight = ( RR * t0 ) / ( MU_atm * gg )
     rh_layers = rh0 * ( alpha * np.exp(-(z_layers-z_layers[0])/ScaleHeight) - ( alpha - 1. ) )
     rh_layers[np.where( rh_layers < 0. )] = np.zeros( len(np.where( rh_layers < 0. )) )
     return rh_layers
@@ -109,17 +109,18 @@ def find_Tprof_moistadiabat( t0, p0, z_layers ):
     """
     t_layers = np.zeros_like( z_layers ) + t0
     z_layers_diff = np.diff( z_layers )
-    ScaleHeight = ( RR * t0 ) / ( mu_atm * gg )
+    ScaleHeight = ( RR * t0 ) / ( MU_atm * gg )
     p_layers = p0 * np.exp( ( z_layers[0] - z_layers )  / ScaleHeight )
-    epsilon = mu_H2O / mu_atm
+    epsilon = MU_H2O / MU_atm
     l_strato = len( z_layers )
     for ll in xrange( len(z_layers)-1 ): 
-        mixing_ratio = CCpressure( t_layers[ll] ) / p_layers[ll]
-        fac1 = 1.  + ( LL * mixing_ratio )/( Rs_dry * t_layers[ll] ) 
-        fac2 = c_p + ( LL**2 * mixing_ratio * epsilon )/( Rs_dry * t_layers[ll]**2 )
+#        mixing_ratio = CCpressure( t_layers[ll] ) / p_layers[ll]
+        mixing_ratio_mass = ( CCpressure( t_layers[ll] )*MU_H2O ) / ( p_layers[ll] * MU_atm )
+        fac1 = 1.  + ( LL * mixing_ratio_mass )/( Rs_dry * t_layers[ll] ) 
+        fac2 = c_p + ( LL**2 * mixing_ratio_mass * epsilon )/( Rs_dry * t_layers[ll]**2 )
         dtdz = - ( fac1 / fac2 ) * gg
         t_layers[ll+1] = t_layers[ll] + dtdz * z_layers_diff[ll]
-        dpdz =  - ( mu_atm * p_layers[ll] / ( RR * t_layers[ll] ) ) * gg
+        dpdz =  - ( MU_atm * p_layers[ll] / ( RR * t_layers[ll] ) ) * gg
         # correction
         if ( t_layers[ll+1] < T_strato ):
             t_layers[ll+1] = T_strato
@@ -144,14 +145,14 @@ def find_Pprof( z_layers, t_layers, p0 ):
     """
     compute profile of pressure given the temperature profile
 
-    dP/dz = - rho g = - ( mu_atm * P / ( R T ) ) g
-    log P  = - ( mu_atm g / R ) * integrate[ 1. / T ] dz  ]
+    dP/dz = - rho g = - ( MU_atm * P / ( R T ) ) g
+    log P  = - ( MU_atm g / R ) * integrate[ 1. / T ] dz  ]
     """
     inv_t_layers = 1. / t_layers
     dlogP = np.zeros( len(z_layers) )
     for ll in xrange( len(z_layers) ):
         dlogP[ll] = np.trapz( inv_t_layers[:ll+1], x=z_layers[:ll+1] )
-    p_layers = p0 * np.exp( -1.0 *( mu_atm * gg / RR ) * dlogP ) 
+    p_layers = p0 * np.exp( -1.0 *( MU_atm * gg / RR ) * dlogP ) 
     return p_layers    
 
 
@@ -190,7 +191,7 @@ def find_Tprof_TI( z_layers, p_layers, p0, p1, T0, T1, q0, q1, beta ):
             theta_e = theta0_e * xx + theta1_e * ( 1. - xx )
             qq      = q0 * xx + q1 * ( 1. - xx )
             temp1   = find_T_from_theta_e( theta_e, p_layers[zi], qq, T0 )
-            temp2   = inv_CCpressure( p_sat_layers[zi] * mu_atm * qq / mu_H2O )*( p_layers[zi] / p_sat_layers[zi] )**( 1./DELTA )
+            temp2   = inv_CCpressure( p_sat_layers[zi] * MU_atm * qq / MU_H2O )*( p_layers[zi] / p_sat_layers[zi] )**( 1./DELTA )
             return temp1 - temp2
 
         x_ans = fsolve( func, 1., args=p_sat_layers[zi] )[0]
@@ -210,21 +211,21 @@ def find_saturation_q( pres, temp, p_sat ):
     """
     t_sat = temp * ( p_sat / pres )**( 1./DELTA )
     p_H2O = CCpressure( t_sat )
-    q =  ( p_H2O * mu_H2O ) / ( p_sat * mu_atm )
+    q =  ( p_H2O * MU_H2O ) / ( p_sat * MU_atm )
     return q
 
 
 #--------------------------------------------------------
 def rh2q( temp, pres, rh ):
     p_H2O = CCpressure( temp ) * rh
-    q = ( p_H2O * mu_H2O ) / ( pres * mu_atm )
+    q = ( p_H2O * MU_H2O ) / ( pres * MU_atm )
     return q
 
 
 #--------------------------------------------------------
 def q2rh( temp, pres, qq ):
 
-    mixing_ratio = qq * mu_atm / mu_H2O
+    mixing_ratio = qq * MU_atm / MU_H2O
     p_H2O = pres * mixing_ratio
     rh = p_H2O / CCpressure( temp )
     return rh

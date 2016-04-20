@@ -5,7 +5,7 @@ import numpy as np
 from params import *
 import func_to_minimize as func_to_minimize
 
-OUTPUTFILE = "survey_F0.95_MoistAdiabatCorrected"
+OUTPUTFILE = "survey_F1.00_MoistAdiabatCorrected"
 #OUTPUTFILE = "survey_test0"
 
 SST0 = np.array([ 308, 4.5])
