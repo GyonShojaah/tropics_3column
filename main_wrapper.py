@@ -52,5 +52,5 @@ if __name__ == "__main__":
             print "residual", residual
 
             with open( OUTPUTFILE, 'a') as f:
-                f.write( "\n" )
+                f.write( "\n\n" )
 
