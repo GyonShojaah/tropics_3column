@@ -1,9 +1,14 @@
-set term postscript eps enhanced color 28
+set term postscript eps enhanced color 24 size 3in,4in
 set output 'survey_F0.85_SST.eps'
 
-set size 0.6,1.0
+
+set lmargin 6
+set rmargin 2
+set bmargin 4
+set tmargin 4
+
 set title "SST [C]"
-set ylabel "SST [C]"
+#set ylabel "SST [C]"
 
 set xrange [0:10]
 plot \
