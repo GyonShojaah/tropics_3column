@@ -14,7 +14,7 @@ import func_to_minimize as func_to_minimize
 #import mks as unit
 #import sys
 
-OUTPUTFILE = "survey_F0.85"
+OUTPUTFILE = "survey_F0.95"
 #OUTPUTFILE = "survey_test0"
 #qq_TI_c = 4e-3
 #aa_w    = 0.4
