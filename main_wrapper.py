@@ -5,17 +5,12 @@ import numpy as np
 from params import *
 import func_to_minimize as func_to_minimize
 
-OUTPUTFILE = "survey_F1.00_MoistAdiabatCorrected"
+OUTPUTFILE = "survey_F0.95"
 #OUTPUTFILE = "survey_test0"
 
-SST0 = np.array([ 308, 4.5])
+SST0 = np.array([ 300.0, 1.0])
 #SST0 = np.array([ 293., 290.]) 
 
-#SST0   = np.array([ 290.15, 289.]) 
-SST_NUM = 4
-SST_array = np.linspace(280, 310, SST_NUM)
-SST_mesh_w, SST_mesh_c = np.meshgrid( SST_array, SST_array )
-points = np.c_[ SST_mesh_w.flatten(), SST_mesh_c.flatten() ]
 
 
 #=============================================================================
@@ -52,5 +47,9 @@ if __name__ == "__main__":
             print "residual", residual
 
             with open( OUTPUTFILE, 'a') as f:
-                f.write( "\n\n" )
+                f.write( "\n" )
+
+        with open( OUTPUTFILE, 'a') as f:
+            f.write( "\n\n" )
+
 

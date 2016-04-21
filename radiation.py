@@ -6,9 +6,6 @@ import datetime
 import mks as unit
 import util_interp
 import errors
-#import rad.gasext as gasext
-#import rad.emission as emission
-#import rad.scatter as scatter
 import sys
 import os
 import commands
@@ -231,188 +228,25 @@ def calc_rad( type, list_l0, z_layers, t_layers, p_layers, q_layers, mu_atm, mu_
 
 
 #=============================================================================
-def get_R( sst_w, sst_c, qq_TI_c, aa_w, factor ):
-#
-#    Rw_0 = griddata( pnts, vals[0], np.array( [ sst_w, sst_c ] ), method="cubic" )[0]
-#    Rw_B = griddata( pnts, vals[1], np.array( [ sst_w, sst_c ] ), method="cubic" )[0]
-#    Rw_T = griddata( pnts, vals[2], np.array( [ sst_w, sst_c ] ), method="cubic" )[0]
-#    Rc_0 = griddata( pnts, vals[3], np.array( [ sst_w, sst_c ] ), method="cubic" )[0]
-#    Rc_B = griddata( pnts, vals[4], np.array( [ sst_w, sst_c ] ), method="cubic" )[0]
-#    Rc_T = griddata( pnts, vals[5], np.array( [ sst_w, sst_c ] ), method="cubic" )[0]
-#    return np.array( [[ Rw_0, Rw_B, Rw_T ], [Rc_0, Rc_B, Rc_T]] )
+def get_R( sst, l_satur, l_strato, z_layers, T_layers, P_layers, q_layers, mu_atm, mu_H2O, factor ):
 
-    #----------------------------------------------------
-    # step 2: location of the trade inversion
-    #----------------------------------------------------
-    l_TI_btm = np.zeros(2)
-    l_TI_tp  = np.zeros(2)
-
-    l_TI_btm[0] = np.where( zz_layers > zz_TI_btm[0] )[0][0]
-    l_TI_btm[1] = np.where( zz_layers > zz_TI_btm[1] )[0][0]
-    l_TI_tp[0]  = np.where( zz_layers > zz_TI_tp[0] )[0][0]
-    l_TI_tp[1]  = np.where( zz_layers > zz_TI_tp[1] )[0][0]
-
-    #----------------------------------------------------
-    # step 3: find q_B
-    #----------------------------------------------------
-    qq_layers.T[0] = rh2q( TT_layers.T[0], P_surf, RH_surf )
-    ss.T[0]        = find_s( TT_layers.T[0], 0. )
-
-    #----------------------------------------------------
-    # step 4: find saturation level
-    #----------------------------------------------------
-    for pool in xrange(2):
-        zz_satur[pool] = find_saturation_level( TT_layers[pool][0], 
-                                                qq_layers[pool][0] )
-        l_satur[pool]  = np.where( zz_layers > zz_satur[pool] )[0][0]
-        
-    #----------------------------------------------------
-    # step 5: find T profile below the saturation level
-    #----------------------------------------------------
-    for pool in xrange(2):
-        TT_layers[pool][:l_satur[pool]+1] = find_Tprof_dryadiabat( TT_layers[pool][0], zz_layers[:l_satur[pool]+1] )
-        qq_layers[pool] = np.tile( qq_layers[pool][0], N_LAYER )
-
-    #----------------------------------------------------
-    # step 6: find P profile below the saturation level
-    #----------------------------------------------------
-    pool = 0 # warm pool
-    PP_layers[pool][:l_satur[pool]+1] = find_Pprof( zz_layers[:l_satur[pool]+1], 
-                                                    TT_layers[pool][:l_satur[pool]+1], 
-                                                    P_surf )
-    
-    #----------------------------------------------------
-    # step 7a: find T profile for warm pool above the saturation level (moist adiabat)
-    #----------------------------------------------------
-    pool = 0 # warm pool
-    # approximation HERE!!!!!!!!!
-    TT_layers[pool][l_satur[pool]:], PP_layers[pool][l_satur[pool]:], l_strato = find_Tprof_moistadiabat( TT_layers[pool][l_satur[pool]], 
-                                                                                                          PP_layers[pool][l_satur[pool]], 
-                                                                                                          zz_layers[l_satur[pool]:] )
-
-    # correction
-    l_strato = l_strato + l_satur[pool]
-
-#    TT_layers[pool][l_satur[pool]:], PP_layers[pool][l_satur[pool]:] = find_Tprof_moistadiabat( TT_layers[pool][l_satur[pool]], 
-#                                                                                                PP_layers[pool][l_satur[pool]], 
-#                                                                                                zz_layers[l_satur[pool]:] ) 
-    qq_layers[pool][l_satur[pool]:] = rh2q( TT_layers[pool][l_satur[pool]:], 
-                                            PP_layers[pool][l_satur[pool]:], 
-                                            np.ones( N_LAYER - l_satur[pool] ) ) 
-
-#    #----------------------------------------------------
-#    # step 8: find tropopause
-#    #----------------------------------------------------
-#    pool = 0
-#    if ( TT_layers[0][-1] > T_strato ) :
-#        if ( verbose == True ):
-#            with open( OUTPUTFILE, 'a') as f:
-#                f.write( "# invalid ! TT_layers[0][-1] > T_strato " )
-#        return np.array([ 0.0, 0.0 ])
-#
-#    l_strato, TT_layers[pool] = find_tropopause( TT_layers[pool] )
-
-
-    #----------------------------------------------------
-    # step 9: specific humidity above tropopause
-    #----------------------------------------------------
-    qT = rh2q( TT_layers[pool][l_strato], PP_layers[pool][l_strato], 1.0 )
-    # specific humidity above tropopause
-    for pool in xrange(2):
-        qq_layers[pool][l_strato:] = np.tile( qT, N_LAYER - l_strato )
-
-
-    #----------------------------------------------------
-    # step 7b: above the trade inversion, the temperature profile of cold pool is same as that of warm pool
-    #----------------------------------------------------
-    TT_layers[1][l_TI_tp[1]:] = TT_layers[0][l_TI_tp[1]:]
-
-
-    # just for now
-    PP_layers[1] = PP_layers[0]
-
-
-    #----------------------------------------------------
-    # step 11: find T profile between saturation level and inversion with mixing theory
-    #----------------------------------------------------
-    for pool in xrange(2):
-
-        if ( pool == 0 ) : # warm pool
-            qq_layers[pool][l_TI_tp[pool]] =  rh2q( TT_layers[pool][l_TI_tp[pool]], 
-                                                    PP_layers[pool][l_TI_tp[pool]], 
-                                                    RH_surf )
-
-        elif ( pool == 1 ) : # cold pool
-            qq_layers[pool][l_TI_tp[pool]] = qq_TI_c
-
-#        print "z_B, z_TI," , zz_layers[l_satur[pool]], zz_layers[l_TI_tp[pool]]
-        TT_layers[pool][l_satur[pool]:l_TI_btm[pool]+1], qq_layers[pool][l_satur[pool]:l_TI_btm[pool]+1] = find_Tprof_TI( zz_layers[l_satur[pool]:l_TI_btm[pool]+1], 
-                                                                                                                          PP_layers[pool][l_satur[pool]:l_TI_btm[pool]+1], 
-                                                                                                                          PP_layers[pool][l_satur[pool]], 
-                                                                                                                          PP_layers[pool][l_TI_tp[pool]], 
-                                                                                                                          TT_layers[pool][l_satur[pool]], 
-                                                                                                                          TT_layers[pool][l_TI_tp[pool]], 
-                                                                                                                          qq_layers[pool][l_satur[pool]], 
-                                                                                                                          qq_layers[pool][l_TI_tp[pool]], 
-                                                                                                                          BETA )
-    #----------------------------------------------------
-    # step 12: determine temperature in TI simply by linear interpolation
-    #----------------------------------------------------
-    for pool in xrange(2):
-
-        TT_layers[pool][l_TI_btm[pool]:l_TI_tp[pool]+1] = connect_linear( zz_layers[l_TI_btm[pool]:l_TI_tp[pool]+1], 
-                                                                          TT_layers[pool][l_TI_btm[pool]], 
-                                                                          TT_layers[pool][l_TI_tp[pool]] )
-        qq_layers[pool][l_TI_btm[pool]:l_TI_tp[pool]+1] = connect_linear( zz_layers[l_TI_btm[pool]:l_TI_tp[pool]+1], 
-                                                                          qq_layers[pool][l_TI_btm[pool]], 
-                                                                          qq_layers[pool][l_TI_tp[pool]] )
-
-    
-
-
-    #----------------------------------------------------
-    # step 10: find moisture profile above the TI
-    #----------------------------------------------------
-    for pool in xrange(2):
-
-        if ( pool == 0 ) : # warm pool
-            RH_TI2 = RH_surf
-        elif ( pool == 1 ) : # cold pool
-            RH_TI2 = q2rh( TT_layers[pool][l_TI_tp[pool]], 
-                           PP_layers[pool][l_TI_tp[pool]], 
-                           qq_layers[pool][l_TI_tp[pool]] )
-            
-        RH_layers[pool][l_TI_tp[pool]:] = find_RHprof_linear_with_P( RH_TI2, 
-                                                                     TT_layers[pool][l_TI_tp[pool]], 
-                                                                     zz_layers[l_TI_tp[pool]:], 
-                                                                     ALPHA )
-
-        qq_layers[pool][l_TI_tp[pool]:] = rh2q( TT_layers[pool][l_TI_tp[pool]:],
-                                                PP_layers[pool][l_TI_tp[pool]:], 
-                                                RH_layers[pool][l_TI_tp[pool]:] )
-
-
-
-    if ( verbose == True ):
-        for ii in xrange( N_LAYER ):
-            print zz_layers[ii]*1e-3, TT_layers[0][ii], TT_layers[1][ii], qq_layers[0][ii]*1e3, qq_layers[1][ii]*1e3
 
     #----------------------------------------------------
     # step 13: compute radiation
     #----------------------------------------------------
     print "in the warm pool"
-    rad_vis_w = factor*calc_rad( "vis", [0, l_satur[0], l_strato], zz_layers, TT_layers[0], PP_layers[0], qq_layers[0], mu_atm, mu_H2O, sst_w, 0  )
+    rad_vis_w = factor*calc_rad( "vis", [0, l_satur[0], l_strato], z_layers, T_layers[0], P_layers[0], q_layers[0], mu_atm, mu_H2O, sst[0], 0  )
     print "rad_vis", rad_vis_w
-    rad_mir_w = calc_rad( "mir", [0, l_satur[0], l_strato], zz_layers, TT_layers[0], PP_layers[0], qq_layers[0], mu_atm, mu_H2O, sst_w, 0  )
+    rad_mir_w = calc_rad( "mir", [0, l_satur[0], l_strato], z_layers, T_layers[0], P_layers[0], q_layers[0], mu_atm, mu_H2O, sst[0], 0  )
     print "rad_mir", rad_mir_w
     print "NET: ", rad_mir_w + rad_vis_w
     
     print ""
     
     print "in the cold pool"
-    rad_vis_c = factor*calc_rad( "vis", [0, l_satur[1], l_strato], zz_layers, TT_layers[1], PP_layers[1], qq_layers[1], mu_atm, mu_H2O, sst_c, 1 )
+    rad_vis_c = factor*calc_rad( "vis", [0, l_satur[1], l_strato], z_layers, T_layers[1], P_layers[1], q_layers[1], mu_atm, mu_H2O, sst[1], 1 )
     print "rad_vis", rad_vis_c
-    rad_mir_c = calc_rad( "mir", [0, l_satur[1], l_strato], zz_layers, TT_layers[1], PP_layers[1], qq_layers[1], mu_atm, mu_H2O, sst_c, 1 )
+    rad_mir_c = calc_rad( "mir", [0, l_satur[1], l_strato], z_layers, T_layers[1], P_layers[1], q_layers[1], mu_atm, mu_H2O, sst[1], 1 )
     print "rad_mir", rad_mir_c
     print "NET: ", rad_mir_c + rad_vis_c
 

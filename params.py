@@ -1,7 +1,7 @@
 from scipy import constants
 import numpy as np
 
-FACTOR1 = (0.85/np.pi)
+FACTOR1 = (0.95/np.pi)
 #FACTOR1 = (0.8/np.pi)
 #FACTOR1 = (1.0/np.pi)
 
@@ -20,8 +20,8 @@ c_p     = 1.006e3        # J kg^-1 K^-1
 #---------------------------------
 P_surf   = 1.013e5      # Pa
 gg       = constants.g  # 
-mu_H2O   = 18.0e-3      # kg
-mu_atm   = 28.8e-3      # kg
+MU_H2O   = 18.0e-3      # kg
+MU_atm   = 28.8e-3      # kg
 T_strato = 195          # K ( Miller's paper )
 GAMMA    = 1.4
 DELTA    = ( GAMMA / ( GAMMA-1. ) ) # P/P0 = (T/T0)**DELTA for dry adiabat
