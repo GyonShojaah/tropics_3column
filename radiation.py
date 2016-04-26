@@ -27,10 +27,12 @@ RAYLEIGH_ON = True
 CLD_ON      = False
 
 
-ATMFILE_W  = "pass_libradtran/atmfile_w.dat"
-ATMFILE_C  = "pass_libradtran/atmfile_c.dat"
-INPUTFILE  = "pass_libradtran/tmp.inp"
-OUTPUTFILE = "pass_libradtran/tmp.out"
+ATMFILE_W  = "pass_libradtran/atmfile_q5_w.dat"
+ATMFILE_C  = "pass_libradtran/atmfile_q5_c.dat"
+INPUTFILE_MIR  = "pass_libradtran/mir.inp"
+INPUTFILE_VIS  = "pass_libradtran/vis.inp"
+OUTPUTFILE_MIR = "pass_libradtran/mir.out"
+OUTPUTFILE_VIS = "pass_libradtran/vis.out"
 
 
 #=============================================================================
@@ -89,8 +91,8 @@ def write_atmfile( zkm_layers, t_layers, p_layers, q_layers, mu_atm, mu_H2O, dic
             f.write( "\t" + str( atmprof0[8][zi] ) ) # NO2
             f.write( "\n" )
         dzi = 1
-        if ( len(zkm_layers) > 50 ): 
-            dzi = len(zkm_layers)/25
+        if ( len(zkm_layers) > 30 ): 
+            dzi = len(zkm_layers)/80
         for zi in np.arange(1,len(zkm_layers))[::-1*dzi] :
             f.write( "\t" + str( zkm_layers[zi] ) )        # altitude in km !!
             f.write( "\t" + str( p_layers[zi]*1e-2 ) )        # pressure in mbar !!
@@ -127,7 +129,7 @@ def q2n( temp, pres, qq, mu_atm, mu_H2O ):
 #=============================================================================
 def write_inputfile_mir( list_z, tsurf, atmfile ):
 
-    with open( INPUTFILE, 'w') as f :
+    with open( INPUTFILE_MIR, 'w') as f :
         f.write( "data_files_path /Users/yuka/libRadtran-1.7/data/" )
         f.write( "\natmosphere_file " + atmfile                     )
         f.write( "\nsolar_file /Users/yuka/libRadtran-1.7/examples/UVSPEC_LOWTRAN_THERMAL.TRANS" )
@@ -136,7 +138,7 @@ def write_inputfile_mir( list_z, tsurf, atmfile ):
         f.write( "\nrte_solver disort2" )
         f.write( "\ntransmittance_wl_file /Users/yuka/libRadtran-1.7/examples/UVSPEC_LOWTRAN_THERMAL.TRANS" )
         f.write( "\ncorrelated_k LOWTRAN" )
-#        f.write( "\nzout 0.0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0 2.0 3.0 4.0 5.0 6.0 7.0 8.0 9.0 10.0 15.0 20.0 25.0 30.0" )
+###        f.write( "\nzout 0.0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0 2.0 3.0 4.0 5.0 6.0 7.0 8.0 9.0 10.0 15.0 20.0 25.0 30.0" )
         f.write( "\nzout" )
         for ii in xrange( len(list_z) ):
             f.write( " " + str(list_z[ii]) )
@@ -149,7 +151,7 @@ def write_inputfile_mir( list_z, tsurf, atmfile ):
 #=============================================================================
 def write_inputfile_vis( list_z, atmfile ):
 
-    with open( INPUTFILE, 'w') as f :
+    with open( INPUTFILE_VIS, 'w') as f :
         f.write( "data_files_path /Users/yuka/libRadtran-1.7/data/" )
         f.write( "\natmosphere_file " + atmfile                     )
         f.write( "\nalbedo 0.2"                                   )
@@ -170,14 +172,15 @@ def write_inputfile_vis( list_z, atmfile ):
 
 
 #=============================================================================
-def read_outputfile( ):
+def read_outputfile( outputfile ):
 
-    data = np.loadtxt( OUTPUTFILE ).T[1]
-    return data
+    zout = np.loadtxt( outputfile ).T[0]
+    data = np.loadtxt( outputfile ).T[1]
+    return zout, data
 
 
 #=============================================================================
-def calc_rad( type, list_l0, z_layers, t_layers, p_layers, q_layers, mu_atm, mu_H2O, tsurf, pool ):
+def calc_rad( type, list_l0, z_layers, t_layers, p_layers, q_layers, mu_atm, mu_H2O, tsurf, pool, factor ):
 
 
     if ( pool == 0 ):
@@ -205,25 +208,31 @@ def calc_rad( type, list_l0, z_layers, t_layers, p_layers, q_layers, mu_atm, mu_
     list_z = []
     for ii in xrange( len(list_l0) ):
         list_z.append( zkm_layers[list_l0[ii]] ) # km
+
+
     if ( type == "mir" ):
         write_inputfile_mir( list_z, tsurf, atmfile )
+        input  = INPUTFILE_MIR
+        output = OUTPUTFILE_MIR
     elif ( type == "vis" ):
         write_inputfile_vis( list_z, atmfile )
+        input  = INPUTFILE_VIS
+        output = OUTPUTFILE_VIS
     else :
         errors.exit_msg("Invalid radiation type.")
 
-    #------------------------------------------------
-    # execute libRadtran
-    #------------------------------------------------
-    check = os.system( 'uvspec < ' + INPUTFILE + " > " + OUTPUTFILE )
+
+    check = os.system( 'uvspec < ' + input + " > " + output )
     if check != 0 :
-        errors.exit_msg("Something is wrong with uvspec.")        
+        errors.exit_msg("Something is wrong with uvspec.")
+
 
     #------------------------------------------------
     # read the output
     #------------------------------------------------
-    array_rad = read_outputfile( )
-    return array_rad
+    array_zout, array_rad = read_outputfile( output )
+
+    return array_zout, factor*array_rad
 
 
 
@@ -235,18 +244,18 @@ def get_R( sst, l_satur, l_strato, z_layers, T_layers, P_layers, q_layers, mu_at
     # step 13: compute radiation
     #----------------------------------------------------
     print "in the warm pool"
-    rad_vis_w = factor*calc_rad( "vis", [0, l_satur[0], l_strato], z_layers, T_layers[0], P_layers[0], q_layers[0], mu_atm, mu_H2O, sst[0], 0  )
+    zout, rad_vis_w = calc_rad( "vis", [0, l_satur[0], l_strato], z_layers, T_layers[0], P_layers[0], q_layers[0], mu_atm, mu_H2O, sst[0], 0, factor  )
     print "rad_vis", rad_vis_w
-    rad_mir_w = calc_rad( "mir", [0, l_satur[0], l_strato], z_layers, T_layers[0], P_layers[0], q_layers[0], mu_atm, mu_H2O, sst[0], 0  )
+    zout, rad_mir_w = calc_rad( "mir", [0, l_satur[0], l_strato], z_layers, T_layers[0], P_layers[0], q_layers[0], mu_atm, mu_H2O, sst[0], 0, 1.0  )
     print "rad_mir", rad_mir_w
     print "NET: ", rad_mir_w + rad_vis_w
     
     print ""
     
     print "in the cold pool"
-    rad_vis_c = factor*calc_rad( "vis", [0, l_satur[1], l_strato], z_layers, T_layers[1], P_layers[1], q_layers[1], mu_atm, mu_H2O, sst[1], 1 )
+    zout, rad_vis_c = calc_rad( "vis", [0, l_satur[1], l_strato], z_layers, T_layers[1], P_layers[1], q_layers[1], mu_atm, mu_H2O, sst[1], 1, factor )
     print "rad_vis", rad_vis_c
-    rad_mir_c = calc_rad( "mir", [0, l_satur[1], l_strato], z_layers, T_layers[1], P_layers[1], q_layers[1], mu_atm, mu_H2O, sst[1], 1 )
+    zout, rad_mir_c = calc_rad( "mir", [0, l_satur[1], l_strato], z_layers, T_layers[1], P_layers[1], q_layers[1], mu_atm, mu_H2O, sst[1], 1, 1.0 )
     print "rad_mir", rad_mir_c
     print "NET: ", rad_mir_c + rad_vis_c
 
@@ -254,9 +263,12 @@ def get_R( sst, l_satur, l_strato, z_layers, T_layers, P_layers, q_layers, mu_at
     R_w = rad_mir_w + rad_vis_w
     R_c = rad_mir_c + rad_vis_c
 
-    print ""
-    print "np.array( [R_w, R_c] )", np.array( [R_w, R_c] )
-    print ""
+#    print "-----------------------------------------------------------------------------------"
+#    print "z[km] \t warm, vis \t warm, mir \t cold, vis \t cold, mir \n"
+#    for zi in xrange( len(zout) ):
+#        print zout[zi], rad_vis_w[zi], rad_mir_w[zi], rad_vis_c[zi], rad_mir_c[zi]
+#    print "-----------------------------------------------------------------------------------"
+
     return np.array( [R_w, R_c] )
 
 

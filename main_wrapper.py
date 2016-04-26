@@ -5,7 +5,7 @@ import numpy as np
 from params import *
 import func_to_minimize as func_to_minimize
 
-OUTPUTFILE = "survey_F0.95"
+OUTPUTFILE = "survey_F1.00"
 #OUTPUTFILE = "survey_test0"
 
 SST0 = np.array([ 300.0, 1.0])
@@ -17,7 +17,6 @@ SST0 = np.array([ 300.0, 1.0])
 # main
 #=============================================================================
 if __name__ == "__main__":
-
     
     aw_array = [0.33, 0.4, 0.5, 0.67]
     qq_array = [2e-3, 4e-3, 6e-3, 8e-3]

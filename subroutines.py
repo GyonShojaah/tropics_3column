@@ -43,7 +43,7 @@ def find_s( T, z ):
     """
     compute dry static energy
     """
-    print "c_p * T, gg * z", c_p * T, gg * z
+#    print "c_p * T, gg * z", c_p * T, gg * z
     s = c_p * T + gg * z
     return s
 
@@ -83,7 +83,7 @@ def find_saturation_point( temp, pres, qq ):
 
 
 #--------------------------------------------------------
-def find_RHprof_linear_with_P( rh0, t0, z_layers, alpha ):
+def find_RHprof_linear_with_P_old( rh0, t0, z_layers, alpha ):
     """
     compute profile of relative humidity, assuming that it changes linearly with pressure
     ****IT IS ONLY APPROXIMATION !!****
@@ -102,7 +102,25 @@ def find_RHprof_linear_with_P( rh0, t0, z_layers, alpha ):
 
 
 #--------------------------------------------------------
-def find_Tprof_moistadiabat( t0, p0, z_layers ):
+def find_RHprof_linear_with_P( rh0, p_layers, alpha ):
+    """
+    compute profile of relative humidity, assuming that it changes linearly with pressure
+    ****IT IS ONLY APPROXIMATION !!****
+    in Miller's code, after Manabe and Wetherald, (JAS,1967)
+         rh = rhs*(pm-0.02*psurf)/(psurf-0.02*psurf)
+     =>  rh = rhs*(pm/psurf - 0.02)/(0.98)
+     =>  rh = rhs*(12.5)*pm/psurf - rhs*0.25
+     => rh/rh0 = (12.5)*pm/psurf - ( ALPHA - 1. )
+    RH = RH0 - ALPHA * ( 1 - exp(-z/H) )
+    SH  = ( RR * temp )/( MU_atm * gg )
+    """
+    rh_layers = rh0 * ( alpha * p_layers / p_layers[0] - ( alpha - 1. ) )
+    rh_layers[np.where( rh_layers < 0. )] = np.zeros( len(np.where( rh_layers < 0. )) )
+    return rh_layers
+
+
+#--------------------------------------------------------
+def find_Tprof_moistadiabat_old( t0, p0, z_layers ):
     """
     temperature profile assuming moist adiabat
     ****IT IS ONLY APPROXIMATION !!****
@@ -121,6 +139,41 @@ def find_Tprof_moistadiabat( t0, p0, z_layers ):
         dtdz = - ( fac1 / fac2 ) * gg
         t_layers[ll+1] = t_layers[ll] + dtdz * z_layers_diff[ll]
         dpdz =  - ( MU_atm * p_layers[ll] / ( RR * t_layers[ll] ) ) * gg
+        # correction
+        if ( t_layers[ll+1] < T_strato ):
+            t_layers[ll+1] = T_strato
+            if ( l_strato > ll + 1 ):
+                l_strato = ll + 1
+
+    return t_layers, p_layers, l_strato
+
+
+
+#--------------------------------------------------------
+def find_Tprof_moistadiabat( t0, p0, z_layers ):
+    """
+    temperature profile assuming moist adiabat
+    ****IT IS ONLY APPROXIMATION !!****
+    """
+    t_layers = np.zeros_like( z_layers ) + t0
+    p_layers = np.zeros_like( z_layers ) + p0
+
+    z_layers_diff = np.diff( z_layers )
+
+    epsilon = MU_H2O / MU_atm
+    l_strato = len( z_layers )
+    for ll in xrange( len(z_layers)-1 ): 
+#        mixing_ratio = CCpressure( t_layers[ll] ) / p_layers[ll]
+        mixing_ratio_mass = ( CCpressure( t_layers[ll] )*MU_H2O ) / ( p_layers[ll] * MU_atm )
+        fac1 = 1.  + ( LL * mixing_ratio_mass )/( Rs_dry * t_layers[ll] ) 
+        fac2 = c_p + ( LL**2 * mixing_ratio_mass * epsilon )/( Rs_dry * t_layers[ll]**2 )
+        dtdz = - ( fac1 / fac2 ) * gg
+        t_layers[ll+1] = t_layers[ll] + dtdz * z_layers_diff[ll]
+        dpdz =  - ( MU_atm * p_layers[ll] / ( RR * t_layers[ll] ) ) * gg
+
+        ScaleHeight = ( RR * t_layers[ll] ) / ( MU_atm * gg )
+        p_layers[ll+1] = p_layers[ll] * np.exp( -1.0 * ( z_layers[ll+1] - z_layers[ll] )  / ScaleHeight )
+
         # correction
         if ( t_layers[ll+1] < T_strato ):
             t_layers[ll+1] = T_strato

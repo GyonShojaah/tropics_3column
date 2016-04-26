@@ -9,9 +9,14 @@ import sys
 
 #from scipy.interpolate import griddata
 
-N_LAYER = 1000
+
+#zz_layers = np.r_[ 0.0, np.logspace(-1, np.log10(50), N_LAYER)[:-1] * 1e3 ]
+#zz_layers = np.linspace(0., 30, N_LAYER) * 1e3
+N_LAYER = 5000
+zz_layers = np.r_[ 0.0, np.logspace(-1, np.log10(50), N_LAYER)[:-1] * 1e3 ]
+
 N_POOL  = 2
-zz_layers = np.r_[ 0.0, np.logspace(-1, np.log10(100), N_LAYER)[:-1] * 1e3 ]
+#zz_layers = np.r_[ np.linspace( 0., 8., 8000), np.logspace( np.log10(8.), np.log10(60), 100)[1:] ]*1e3
 
 # Variables
 MM        = np.zeros([N_POOL])
@@ -60,23 +65,26 @@ def myfunc( sst_in, qq_TI_c, aa_w, verbose, outfile ):
     #         temperature at the bottom of atmosphere is specified.
     #----------------------------------------------------
     SST = np.array([ sst_in[0], sst_in[0]-sst_in[1]**2. ])
-    TT_layers.T[0] = SST - dT_surf
     print ""
     print "sst_w, sst_c", SST[0]-273.15, SST[1]-273.15
     print ""
 
+    Tsurf = SST - dT_surf
+
+#    TT_layers.T[0] = SST - dT_surf
+
     #----------------------------------------------------
     # step 2: compute statistic energy at the bottom
     #----------------------------------------------------
-    qq_layers.T[0] = rh2q( TT_layers.T[0], P_surf, RH_surf )
-    print "static energy at the bottom"
-    ss.T[0]        = find_s( TT_layers.T[0], 0. )
+    qq_layers.T[0] = rh2q( Tsurf, P_surf, RH_surf )
+#    print "static energy at the bottom"
+    ss.T[0]        = find_s( Tsurf, 0. )
 
     #----------------------------------------------------
     # step 3: find saturation level
     #----------------------------------------------------
     for pool in xrange(2):
-        zz_satur[pool] = find_saturation_level( TT_layers[pool][0], 
+        zz_satur[pool] = find_saturation_level( Tsurf[pool], 
                                                 qq_layers[pool][0] )
         l_satur[pool]  = np.where( zz_layers > zz_satur[pool] )[0][0]
         
@@ -84,7 +92,7 @@ def myfunc( sst_in, qq_TI_c, aa_w, verbose, outfile ):
     # step 4: find T profiles below the saturation level
     #----------------------------------------------------
     for pool in xrange(2):
-        TT_layers[pool][:l_satur[pool]+1] = find_Tprof_dryadiabat( TT_layers[pool][0], zz_layers[:l_satur[pool]+1] )
+        TT_layers[pool][:l_satur[pool]+1] = find_Tprof_dryadiabat( Tsurf[pool], zz_layers[:l_satur[pool]+1] )
         qq_layers[pool] = np.tile( qq_layers[pool][0], N_LAYER )
 
     #----------------------------------------------------
@@ -96,8 +104,9 @@ def myfunc( sst_in, qq_TI_c, aa_w, verbose, outfile ):
                                                     P_surf )
     
     #----------------------------------------------------
-    # step 6: find T profile for warm pool above the saturation level (moist adiabat)
-    #          and also find the tropopause  
+    # step 6: warm pool
+    #           find T/RH profile above the saturation level (moist adiabat)
+    #           and also find the tropopause  
     #----------------------------------------------------
     pool = 0 # warm pool
     # approximation HERE!!!!!!!!!
@@ -105,10 +114,15 @@ def myfunc( sst_in, qq_TI_c, aa_w, verbose, outfile ):
                                                                                                           PP_layers[pool][l_satur[pool]], 
                                                                                                           zz_layers[l_satur[pool]:] )
     l_strato = l_strato + l_satur[pool]
+#    qq_layers[pool][l_satur[pool]:] = rh2q( TT_layers[pool][l_satur[pool]:], 
+#                                            PP_layers[pool][l_satur[pool]:], 
+#                                            np.ones( N_LAYER - l_satur[pool] ) ) 
+#
 
-    qq_layers[pool][l_satur[pool]:] = rh2q( TT_layers[pool][l_satur[pool]:], 
-                                            PP_layers[pool][l_satur[pool]:], 
-                                            np.ones( N_LAYER - l_satur[pool] ) ) 
+    RH_layers[pool] = find_RHprof_linear_with_P( RH_surf, PP_layers[pool], ALPHA )
+    qq_layers[pool][l_TI_tp[pool]:] = rh2q( TT_layers[pool][l_TI_tp[pool]:],
+                                            PP_layers[pool][l_TI_tp[pool]:], 
+                                            RH_layers[pool][l_TI_tp[pool]:] )
 
 
     #----------------------------------------------------
@@ -126,19 +140,24 @@ def myfunc( sst_in, qq_TI_c, aa_w, verbose, outfile ):
     # just for now
     PP_layers[1] = PP_layers[0]
 
+    #----------------------------------------------------
+    # step 10: find moisture profile above the TI
+    #----------------------------------------------------
+    pool = 1
+    RH_TI2 = q2rh( TT_layers[pool][l_TI_tp[pool]], 
+                   PP_layers[pool][l_TI_tp[pool]], 
+                   qq_TI_c )
+    RH_layers[pool][l_TI_tp[pool]:] = find_RHprof_linear_with_P( RH_TI2, PP_layers[pool][l_TI_tp[pool]:], ALPHA )
+            
+    qq_layers[pool][l_TI_tp[pool]:] = rh2q( TT_layers[pool][l_TI_tp[pool]:],
+                                            PP_layers[pool][l_TI_tp[pool]:], 
+                                            RH_layers[pool][l_TI_tp[pool]:] )
+
 
     #----------------------------------------------------
     # step 10: find T profiles between saturation level and inversion with mixing theory
     #----------------------------------------------------
     for pool in xrange(2):
-
-        if ( pool == 0 ) : # warm pool
-            qq_layers[pool][l_TI_tp[pool]] =  rh2q( TT_layers[pool][l_TI_tp[pool]], 
-                                                    PP_layers[pool][l_TI_tp[pool]], 
-                                                    RH_surf )
-
-        elif ( pool == 1 ) : # cold pool
-            qq_layers[pool][l_TI_tp[pool]] = qq_TI_c
 
 #        print "z_B, z_TI," , zz_layers[l_satur[pool]], zz_layers[l_TI_tp[pool]]
         TT_layers[pool][l_satur[pool]:l_TI_btm[pool]+1], qq_layers[pool][l_satur[pool]:l_TI_btm[pool]+1] = find_Tprof_TI( zz_layers[l_satur[pool]:l_TI_btm[pool]+1], 
@@ -165,33 +184,11 @@ def myfunc( sst_in, qq_TI_c, aa_w, verbose, outfile ):
     
 
 
-    #----------------------------------------------------
-    # step 10: find moisture profile above the TI
-    #----------------------------------------------------
-    for pool in xrange(2):
-
-        if ( pool == 0 ) : # warm pool
-            RH_TI2 = RH_surf
-        elif ( pool == 1 ) : # cold pool
-            RH_TI2 = q2rh( TT_layers[pool][l_TI_tp[pool]], 
-                           PP_layers[pool][l_TI_tp[pool]], 
-                           qq_layers[pool][l_TI_tp[pool]] )
-            
-        RH_layers[pool][l_TI_tp[pool]:] = find_RHprof_linear_with_P( RH_TI2, 
-                                                                     TT_layers[pool][l_TI_tp[pool]], 
-                                                                     zz_layers[l_TI_tp[pool]:], 
-                                                                     ALPHA )
-
-        qq_layers[pool][l_TI_tp[pool]:] = rh2q( TT_layers[pool][l_TI_tp[pool]:],
-                                                PP_layers[pool][l_TI_tp[pool]:], 
-                                                RH_layers[pool][l_TI_tp[pool]:] )
 
 
-
-
-    if ( verbose == True ):
-        for ii in xrange( N_LAYER ):
-            print zz_layers[ii]*1e-3, TT_layers[0][ii], TT_layers[1][ii], qq_layers[0][ii]*1e3, qq_layers[1][ii]*1e3
+#    if ( verbose == True ):
+#        for ii in xrange( N_LAYER ):
+#            print zz_layers[ii]*1e-3, TT_layers[0][ii], TT_layers[1][ii], qq_layers[0][ii]*1e3, qq_layers[1][ii]*1e3
 
 
     RR = get_R( SST, l_satur, l_strato, zz_layers, TT_layers, PP_layers, qq_layers, MU_atm, MU_H2O, FACTOR1 )
@@ -311,7 +308,7 @@ def myfunc( sst_in, qq_TI_c, aa_w, verbose, outfile ):
             f.write( str(LL*EE[0])  + "\t" )
             f.write( str(LL*EE[1])  + "\t" )
 
-            f.write( str(zz_layers[l_strato]) + "\t" )
+            f.write( str(zz_layers[l_strato]*1e-3) + "\t" )
 
             f.write( str(residual[0]) + "\t" )
             f.write( str(residual[1]) + "\t" )

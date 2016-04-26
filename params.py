@@ -1,7 +1,7 @@
 from scipy import constants
 import numpy as np
 
-FACTOR1 = (0.95/np.pi)
+FACTOR1 = (1.0/np.pi)
 #FACTOR1 = (0.8/np.pi)
 #FACTOR1 = (1.0/np.pi)
 
