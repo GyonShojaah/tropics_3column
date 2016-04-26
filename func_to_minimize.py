@@ -2,7 +2,7 @@
 import numpy as np
 from subroutines import *
 from params import *
-from radiation import *
+import rad_drv_libradtran as rad_drv 
 from cloud import *
 import mks as unit
 import sys
@@ -191,7 +191,7 @@ def myfunc( sst_in, qq_TI_c, aa_w, verbose, outfile ):
 #            print zz_layers[ii]*1e-3, TT_layers[0][ii], TT_layers[1][ii], qq_layers[0][ii]*1e3, qq_layers[1][ii]*1e3
 
 
-    RR = get_R( SST, l_satur, l_strato, zz_layers, TT_layers, PP_layers, qq_layers, MU_atm, MU_H2O, FACTOR1 )
+    RR = rad_drv.get_R( SST, l_satur, l_strato, zz_layers, TT_layers, PP_layers, qq_layers, MU_atm, MU_H2O, FACTOR1 )
 
 #    RR = get_R( SST[0], SST[1], pnts, vals )
 

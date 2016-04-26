@@ -69,7 +69,6 @@ def potential_temperature( temp, pres ):
 
 
 def cloud_forcing_w( a_w, z_layers, l_list ):
-    
 
     z_0       = z_layers[int(l_list[0])]
     z_satur   = z_layers[int(l_list[1])]
