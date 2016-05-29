@@ -4,7 +4,7 @@ from scipy.optimize import fsolve
 from scipy.optimize import minimize
 import numpy as np
 from params import *
-import func_to_minimize
+import func_to_minimize_Ronly as func_to_minimize
 
 #from subroutines import *
 #from params import *
@@ -41,13 +41,15 @@ if __name__ == "__main__":
     aa_w = 0.5
     qq_TI_c = 6e-3
     
-    with open( OUTPUTFILE, 'w') as f:
-        f.write( "# aa_w \t qq_T_c \t z_tropopause \t SST_w \t SST_c \t RR_w_0 \t RR_w_1 \t RR_w_2 \t RR_c_0 \t RR_c_1 \t RR_c_2 \t MM_w \t MM_c \t SS_w \t SS_c \t EE_w \t EE_c \t residuals \n" )
+    sst_w   = np.linspace( 20., 50., 20 ) + 273.15
+    sst_dif = np.logspace( np.log10(0.1), np.log10(15), 20 )
 
-    func_to_minimize.myfunc( SST, qq_TI_c, aa_w, True, OUTPUTFILE )
+    for ii in xrange(len(sst_w)):
+        for jj in xrange(len(sst_dif)):
 
-    with open( OUTPUTFILE, 'a') as f:
-        f.write( "\n" )
+            SST_in = np.array( [ sst_w[ii], sst_dif[jj] ] )
+            func_to_minimize.myfunc( SST_in, qq_TI_c, aa_w, True, OUTPUTFILE )
+
 
     
 

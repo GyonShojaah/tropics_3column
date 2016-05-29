@@ -1,3 +1,4 @@
+
 import numpy as np
 from params import *
 from scipy.optimize import fsolve
@@ -249,6 +250,8 @@ def find_Tprof_TI( z_layers, p_layers, p0, p1, T0, T1, q0, q1, beta ):
 
         x_ans = fsolve( func, 1., args=p_sat_layers[zi] )[0]
 
+#        print "x_ans", x_ans
+
         q_layers[zi] = q0 * x_ans + q1 * ( 1. - x_ans )
         theta_e = theta0_e * x_ans + theta1_e * ( 1. - x_ans )
         t_layers[zi] = find_T_from_theta_e( theta_e, p_layers[zi], q_layers[zi], T0 )
@@ -301,7 +304,7 @@ def find_M( R, s, qT, q_TI, F ):
     find M
     """
     M = ( R[1] - R[2] - F )/( ( s[1] + LL*qT ) - ( s[0] + LL*q_TI ) )
-    print "s[1], LL*qT, s[0], LL*q_TI", s[1], LL*qT, s[0], LL*q_TI
+    print "s[1], LL*qT, s[0], LL*q_TI, denomi, numerator", s[1], LL*qT, s[0], LL*q_TI, ( s[1] + LL*qT ) - ( s[0] + LL*q_TI ), R[1] - R[2]
     return M
 
 

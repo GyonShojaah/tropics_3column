@@ -1,7 +1,13 @@
 from scipy import constants
 import numpy as np
 
-FACTOR1 = (1.0/np.pi)
+#FACTOR = np.array( [ (0.98/np.pi), (0.98/np.pi) ] )
+#FACTOR = np.array( [ (1.032/np.pi), (0.98/np.pi) ] )
+#FACTOR = np.array( [ (1./np.pi), (1./np.pi) ] )
+FACTOR = np.array( [ (1./np.pi), (1./np.pi) ] )
+
+SOL      = 1360.6718     # W/m^2
+ALBEDO   = 0.05
 #FACTOR1 = (0.8/np.pi)
 #FACTOR1 = (1.0/np.pi)
 
@@ -18,7 +24,8 @@ c_p     = 1.006e3        # J kg^-1 K^-1
 #---------------------------------
 # Planetary Parameters
 #---------------------------------
-P_surf   = 1.013e5      # Pa
+P_surf   = 0.98e5      # Pa
+#P_surf   = 9.882964e4     # Pa
 gg       = constants.g  # 
 MU_H2O   = 18.0e-3      # kg
 MU_atm   = 28.8e-3      # kg
@@ -54,6 +61,7 @@ dR_w_satur = -27.
 FF_o_w    = -23.6       # W m^-2
 FF_o_c    = -23.6       # W m^-2
 FF_m_s_0  = -8.6   # W m^-2
+##FF_m_s_0  = 8.6   # W m^-2
 LF_m_q_0  = -10.2  # W m^-2
 
 

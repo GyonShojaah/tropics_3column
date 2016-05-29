@@ -69,9 +69,6 @@ def myfunc( sst_in, qq_TI_c, aa_w, verbose, outfile ):
     #         temperature at the bottom of atmosphere is specified.
     #----------------------------------------------------
     SST = np.array([ sst_in[0], sst_in[0]-sst_in[1]**2. ])
-    print "---------------------------------------------"
-    print " sst_w, sst_c", SST[0]-273.15, SST[1]-273.15
-    print "---------------------------------------------"
     Tsurf = SST - dT_surf
 
     #----------------------------------------------------
@@ -186,94 +183,9 @@ def myfunc( sst_in, qq_TI_c, aa_w, verbose, outfile ):
 
     RR = rad_drv.get_R( SST, zz_satur, zz_layers[l_strato], zz_layers, TT_layers, PP_layers, qq_layers, MU_atm, MU_H2O, SOL, FACTOR, ALBEDO )
 
-    print ""
-    print "before"
-    print "RR: ", RR
-    print ""
-
-
-       
-    #----------------------------------------------------
-    # step 11: obtain Mw and Mc
-    #----------------------------------------------------
-    qq_TI_w = qq_layers[0][l_TI_tp[0]]
-    MM[0] = find_M( RR[0], ss[0], qT, qq_TI_w, 0. )
-    MM[1] = find_M( RR[1], ss[1], qT, qq_TI_c, FF_m_s )
-    
-    #----------------------------------------------------
-    # step 12: obtain Sw and Sc
-    #----------------------------------------------------
-    SS[0] = find_Sw( MM, RR, ss, ss[0][0], aa_w, aa_c )
-    SS[1] = find_Sc( MM, RR, ss, ss[1][0] ) # ss_Bplus is equal to ss (z_B)
-    
-    #----------------------------------------------------
-    # step 13: Obtain Ew and Ec
-    #----------------------------------------------------
-    EE[0] = find_Ew( MM, qq_layers, l_TI_tp[0], aa_w, aa_c ) #??
-    EE[1] = find_Ec( MM, qq_layers, l_TI_tp[1], FF_m_q ) #??
-    
-    #----------------------------------------------------
-    # step 14: balanck check
-    #----------------------------------------------------
-    dE_w = check_surfbalance( RR[0][0], EE[0], SS[0], FF_o_w )
-    dE_c = check_surfbalance( RR[1][0], EE[1], SS[1], FF_o_c )
-
-    residual = np.array([ dE_w, dE_c ])
-
-    #----------------------------------------------------------------
-    if ( verbose == True ):
-
-        with open( outfile, 'a') as f:
-
-            f.write( str(aa_w) + "\t" )
-            f.write( str(qq_TI_c*1e3) + "\t" )
-
-            f.write( str(SST[0]-273.15) + "\t" )
-            f.write( str(SST[1]-273.15) + "\t" )
-
-            f.write( str(zz_layers[l_strato]*1e-3) + "\t" )
-
-            f.write( str(RR[0][0]) + "\t" )
-            f.write( str(RR[0][1]) + "\t" )
-            f.write( str(RR[0][2]) + "\t" )
-            f.write( str(RR[1][0]) + "\t" )
-            f.write( str(RR[1][1]) + "\t" )
-            f.write( str(RR[1][2]) + "\t" )
-            f.write( str(MM[0])  + "\t" )
-            f.write( str(MM[1])  + "\t" )
-            f.write( str(SS[0])  + "\t" )
-            f.write( str(SS[1])  + "\t" )
-            f.write( str(LL*EE[0])  + "\t" )
-            f.write( str(LL*EE[1])  + "\t" )
-
-            f.write( str(residual[0]) + "\t" )
-            f.write( str(residual[1]) + "\t" )
-
-#        with open( OUTPUTFILE, 'a') as f:
-#            f.write( str(qq_TI_c*1e3)   + "\t" )
-#            f.write( str(aa_w)          + "\t" )
-#            f.write( str(SST[0]-273.15) + "\t" )
-#            f.write( str(SST[1]-273.15) + "\t" )
-#            f.write( str(MM[0])         + "\t" )
-#            f.write( str(MM[1])         + "\t" )
-#            f.write( str(zz_layers[l_strato]*1e-3) + "\t" )
-#            f.write( str(RR[0][2])      + "\t" )
-#            f.write( str(RR[1][2])      + "\t" )
-#            f.write( str(RR[0][0])      + "\t" )
-#            f.write( str(RR[1][0])      + "\t" )
-#            f.write( str(LL*EE[0])      + "\t" )
-#            f.write( str(LL*EE[1])      + "\t" )
-#            f.write( str(SS[0])         + "\t" )
-#            f.write( str(SS[1])         + "\t" )
-
-                
-#    return np.array([ dE_w, dE_c ])
-
-    print ""
-    print "residual,",  residual
-    print ""
+    print SST[0], SST[1], RR[0][0], RR[0][1], RR[0][2], RR[1][0], RR[1][1], RR[1][2]
 #    return residual[0]**2 + residual[1]**2
-    return residual
+
 
 
 

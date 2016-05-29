@@ -76,10 +76,11 @@ def cloud_forcing_w( a_w, z_layers, l_list ):
     z_strato  = z_layers[int(l_list[3])]
 
     dR_strato = dR_w_TOA / a_w
-    dR_TI     = ( ( dR_w_TOA - dR_w_satur ) / ( z_strato - z_satur ) *  ( z_TI - z_satur ) + dR_w_satur ) / a_w
+#    dR_TI     = ( ( dR_w_TOA - dR_w_satur ) / ( z_strato - z_satur ) *  ( z_TI - z_satur ) + dR_w_satur ) / a_w
+    dR_satur     = dR_w_satur / a_w
     dR_0      = dR_w_satur / a_w
 
-    return np.array( [ dR_0, dR_TI, dR_strato ])
+    return np.array( [ dR_0, dR_satur, dR_strato ])
 
 
 
