@@ -4,7 +4,8 @@ from scipy.optimize import fsolve
 from scipy.optimize import minimize
 import numpy as np
 from params import *
-import func_to_minimize_Ronly as func_to_minimize
+import func_to_minimize as func_to_minimize
+import sys
 
 #from subroutines import *
 #from params import *
@@ -21,7 +22,7 @@ import func_to_minimize_Ronly as func_to_minimize
 #SST0 = np.array([ 293., 290.]) 
 
 
-OUTPUTFILE = "check_test"
+OUTPUTFILE = "checkgrid_aw0.67_qTIc4"
 #OUTPUTFILE = "outputfile"
 
 SST = np.array( [ 39. + 273.15, np.sqrt( 39. - 37. ) ] )
@@ -38,18 +39,36 @@ if __name__ == "__main__":
 #    aw_array = [0.33, 0.4, 0.5, 0.67]
 #    qq_array = [2e-3, 4e-3, 6e-3, 8e-3]
 
-    aa_w = 0.5
-    qq_TI_c = 6e-3
+    aa_w = 0.67
+    qq_TI_c = 4e-3
     
-    sst_w   = np.linspace( 20., 50., 20 ) + 273.15
-    sst_dif = np.logspace( np.log10(0.1), np.log10(15), 20 )
+    sst_w   = np.linspace( 25., 40., 20 ) + 273.15
+    sst_dif = np.linspace( np.sqrt(0.1), np.sqrt(10.), 20 )
+
+#    print sst_dif
+#    sys.exit()
 
     for ii in xrange(len(sst_w)):
         for jj in xrange(len(sst_dif)):
 
             SST_in = np.array( [ sst_w[ii], sst_dif[jj] ] )
-            func_to_minimize.myfunc( SST_in, qq_TI_c, aa_w, True, OUTPUTFILE )
 
+            SST = np.array([ SST_in[0], SST_in[0]-SST_in[1]**2. ])
+#            print "SST", SST
+
+            params = ( qq_TI_c, aa_w, True, OUTPUTFILE )
+            residual = func_to_minimize.myfunc( SST_in, *params )
+
+            print ""
+
+            with open( OUTPUTFILE, 'a') as f:
+                f.write( "\n" )
+
+
+        print ""
+
+        with open( OUTPUTFILE, 'a') as f:
+            f.write( "\n" )
 
     
 

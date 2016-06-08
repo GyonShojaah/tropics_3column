@@ -6,6 +6,8 @@ import numpy as np
 from params import *
 import func_to_minimize_ver2 as func_to_minimize
 
+from scipy.interpolate import griddata
+
 OUTPUTFILE = "survey_F1.0-0.9"
 #OUTPUTFILE = "survey_test0"
 
@@ -30,8 +32,10 @@ def make_gridR( q_TI, a_w ):
 
         sst_in_w    = points[ii][0]
         sst_in_diff = points[ii][1]
-        
+
         values.T[ii] = find_R.find_R( np.array([sst_in_w, sst_in_diff]), q_TI, a_w, verbose=False )
+        print 'grid point ', points[ii]
+        print 'values     ', values.T[ii]
 
     #-----------------------------------------------------------
     return points, values
