@@ -67,10 +67,8 @@ def potential_temperature( temp, pres ):
     return theta
 
 
+def cloud_forcing_w( a_w ):
 
-def cloud_forcing_w( a_w, z_layers, z_list ):
-
-    z_satur, z_TI, z_strato = z_list
     dR_strato = dR_w_TOA / a_w
 #    dR_TI     = ( ( dR_w_TOA - dR_w_satur ) / ( z_strato - z_satur ) *  ( z_TI - z_satur ) + dR_w_satur ) / a_w
     dR_satur     = dR_w_satur / a_w

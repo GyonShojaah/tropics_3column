@@ -170,7 +170,7 @@ def myfunc( sst_in, qq_TI_c, aa_w, verbose, outfile ):
     # step 14: radiation !!
     #----------------------------------------------------
     RR = rad_drv.get_R( SST, zz_satur, zz_strato, zz_layers, TT_layers, PP_layers, qq_layers, MU_atm, MU_H2O, SOL, FACTOR, ALBEDO )
-    dR_add_w = cloud_forcing_w( aa_w, zz_layers, [0, zz_satur[0], zz_TI_top[0], zz_strato] )
+    dR_add_w = cloud_forcing_w( aa_w )
     dR_add_c = cloud_forcing_c( aa_c )
     RR[0] += dR_add_w + dR_all
     RR[1] += dR_add_c + dR_all
