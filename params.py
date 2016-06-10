@@ -1,10 +1,10 @@
 from scipy import constants
 import numpy as np
 
-OUTPUTFILE = "survey_F0.93-0.92_2"
-FACTOR = np.array( [ (0.93/np.pi), (0.92/np.pi) ] )
+OUTPUTFILE = "surveyR_F0.95-0.92"
+FACTOR = np.array( [ (0.95/np.pi), (0.92/np.pi) ] )
 
-SST0 = np.array( [ 40. + 273.15, np.sqrt( 1. ) ] )
+SST0 = np.array( [ 45. + 273.15, np.sqrt( 1. ) ] )
 SOL      = 1360.6718     # W/m^2
 ALBEDO   = 0.05
 

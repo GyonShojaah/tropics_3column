@@ -12,8 +12,9 @@ import func_to_minimize as func_to_minimize
 #=============================================================================
 if __name__ == "__main__":
     
-    aw_array = [0.33, 0.4, 0.5, 0.6]
-    qq_array = [2e-3, 4e-3, 6e-3, 8e-3]
+    aw_array = [0.33, 0.4, 0.5, 0.67]
+#    qq_array = [2e-3, 4e-3, 6e-3, 8e-3]
+    qq_array = [1e-3, 4e-3, 6e-3, 9e-3]
 
 #    aw_array = [0.4]
 #    qq_array = [4e-3]
@@ -24,9 +25,9 @@ if __name__ == "__main__":
 
     for aa_w in aw_array :
 
-        SST_ini = SST0
-
         for qq_TI_c in qq_array :      
+
+            SST_ini = SST0
 
             print ""
             print "#---------------------------------------------------------------"

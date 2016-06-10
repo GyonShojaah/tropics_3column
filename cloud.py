@@ -68,13 +68,9 @@ def potential_temperature( temp, pres ):
 
 
 
-def cloud_forcing_w( a_w, z_layers, l_list ):
+def cloud_forcing_w( a_w, z_layers, z_list ):
 
-    z_0       = z_layers[int(l_list[0])]
-    z_satur   = z_layers[int(l_list[1])]
-    z_TI      = z_layers[int(l_list[2])]
-    z_strato  = z_layers[int(l_list[3])]
-
+    z_satur, z_TI, z_strato = z_list
     dR_strato = dR_w_TOA / a_w
 #    dR_TI     = ( ( dR_w_TOA - dR_w_satur ) / ( z_strato - z_satur ) *  ( z_TI - z_satur ) + dR_w_satur ) / a_w
     dR_satur     = dR_w_satur / a_w
@@ -84,7 +80,7 @@ def cloud_forcing_w( a_w, z_layers, l_list ):
 
 
 
-def cloud_forcing_c( a_c, z_layers, l_list ):
+def cloud_forcing_c( a_c ):
     
     dR_all = dR_c / a_c
     return np.array( [ dR_all, dR_all, dR_all ])

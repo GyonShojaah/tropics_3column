@@ -1,6 +1,6 @@
 #--------------------------------------------------------------------------------------------------
 
-set term postscript eps enhanced color 24 size 3in,4in
+set term postscript eps enhanced color 28 size 2in,3in
 set output 'filetag_residual.eps'
 
 set lmargin 6
@@ -16,14 +16,14 @@ plot \
 'filetag' index 1 us 2:18 w l lw 3 lc rgbcolor "#FF9999" ti '', \
 'filetag' index 2 us 2:18 w l lw 3 lc rgbcolor "#FF6666" ti '', \
 'filetag' index 3 us 2:18 w l lw 3 lc rgbcolor "#FF0000" ti '', \
-'filetag' index 0 us 2:19 w l lw 3 dt (20,10) lc rgbcolor "#CCCCFF" ti '', \
-'filetag' index 1 us 2:19 w l lw 3 dt (20,10) lc rgbcolor "#9999FF" ti '' , \
-'filetag' index 2 us 2:19 w l lw 3 dt (20,20) lc rgbcolor "#6666FF" ti '' , \
-'filetag' index 3 us 2:19 w l lw 3 dt (20,20) lc rgbcolor "#0000FF" ti '' 
+'filetag' index 0 us 2:19 w l lw 3 dt (10,5) lc rgbcolor "#CCCCFF" ti '', \
+'filetag' index 1 us 2:19 w l lw 3 dt (10,5) lc rgbcolor "#9999FF" ti '' , \
+'filetag' index 2 us 2:19 w l lw 3 dt (10,5) lc rgbcolor "#6666FF" ti '' , \
+'filetag' index 3 us 2:19 w l lw 3 dt (10,5) lc rgbcolor "#0000FF" ti '' 
 
 #--------------------------------------------------------------------------------------------------
 
-set term postscript eps enhanced color 24 size 3in,4in
+set term postscript eps enhanced color 18 size 2in,3in
 set output 'filetag_MM.eps'
 
 set lmargin 6
@@ -40,13 +40,13 @@ plot \
 'filetag' index 1 us 2:12 w l lw 3 lc rgbcolor "#FF9999" ti '', \
 'filetag' index 2 us 2:12 w l lw 3 lc rgbcolor "#FF6666" ti '', \
 'filetag' index 3 us 2:12 w l lw 3 lc rgbcolor "#FF0000" ti '', \
-'filetag' index 0 us 2:13 w l lw 3 dt (20,10) lc rgbcolor "#CCCCFF" ti '', \
-'filetag' index 1 us 2:13 w l lw 3 dt (20,10) lc rgbcolor "#9999FF" ti '' , \
-'filetag' index 2 us 2:13 w l lw 3 dt (20,20) lc rgbcolor "#6666FF" ti '' , \
-'filetag' index 3 us 2:13 w l lw 3 dt (20,20) lc rgbcolor "#0000FF" ti '' 
+'filetag' index 0 us 2:13 w l lw 3 dt (10,5) lc rgbcolor "#CCCCFF" ti '', \
+'filetag' index 1 us 2:13 w l lw 3 dt (10,5) lc rgbcolor "#9999FF" ti '' , \
+'filetag' index 2 us 2:13 w l lw 3 dt (10,5) lc rgbcolor "#6666FF" ti '' , \
+'filetag' index 3 us 2:13 w l lw 3 dt (10,5) lc rgbcolor "#0000FF" ti '' 
 
 #--------------------------------------------------------------------------------------------------
-set term postscript eps enhanced color 24 size 3in,4in
+set term postscript eps enhanced color 18 size 2in,3in
 set output 'filetag_LatentHeatFlux.eps'
 
 set lmargin 6
@@ -65,14 +65,14 @@ plot \
 'filetag' index 1 us 2:16 w l lw 3 lc rgbcolor "#FF9999" ti '', \
 'filetag' index 2 us 2:16 w l lw 3 lc rgbcolor "#FF6666" ti '', \
 'filetag' index 3 us 2:16 w l lw 3 lc rgbcolor "#FF0000" ti '', \
-'filetag' index 0 us 2:17 w l lw 3 dt (20,10) lc rgbcolor "#CCCCFF" ti '', \
-'filetag' index 1 us 2:17 w l lw 3 dt (20,10) lc rgbcolor "#9999FF" ti '' , \
-'filetag' index 2 us 2:17 w l lw 3 dt (20,20) lc rgbcolor "#6666FF" ti '' , \
-'filetag' index 3 us 2:17 w l lw 3 dt (20,20) lc rgbcolor "#0000FF" ti '' 
+'filetag' index 0 us 2:17 w l lw 3 dt (10,5) lc rgbcolor "#CCCCFF" ti '', \
+'filetag' index 1 us 2:17 w l lw 3 dt (10,5) lc rgbcolor "#9999FF" ti '' , \
+'filetag' index 2 us 2:17 w l lw 3 dt (10,5) lc rgbcolor "#6666FF" ti '' , \
+'filetag' index 3 us 2:17 w l lw 3 dt (10,5) lc rgbcolor "#0000FF" ti '' 
 
 #--------------------------------------------------------------------------------------------------
 
-set term postscript eps enhanced color 24 size 3in,4in
+set term postscript eps enhanced color 18 size 2in,3in
 set output 'filetag_Rsurf.eps'
 
 set lmargin 6
@@ -91,14 +91,14 @@ plot \
 'filetag' index 1 us 2:6 w l lw 3 lc rgbcolor "#FF9999" ti '', \
 'filetag' index 2 us 2:6 w l lw 3 lc rgbcolor "#FF6666" ti '', \
 'filetag' index 3 us 2:6 w l lw 3 lc rgbcolor "#FF0000" ti '', \
-'filetag' index 0 us 2:9 w l lw 3 dt (20,10) lc rgbcolor "#CCCCFF" ti '', \
-'filetag' index 1 us 2:9 w l lw 3 dt (20,10) lc rgbcolor "#9999FF" ti '' , \
-'filetag' index 2 us 2:9 w l lw 3 dt (20,20) lc rgbcolor "#6666FF" ti '' , \
-'filetag' index 3 us 2:9 w l lw 3 dt (20,20) lc rgbcolor "#0000FF" ti ''
+'filetag' index 0 us 2:9 w l lw 3 dt (10,5) lc rgbcolor "#CCCCFF" ti '', \
+'filetag' index 1 us 2:9 w l lw 3 dt (10,5) lc rgbcolor "#9999FF" ti '' , \
+'filetag' index 2 us 2:9 w l lw 3 dt (10,5) lc rgbcolor "#6666FF" ti '' , \
+'filetag' index 3 us 2:9 w l lw 3 dt (10,5) lc rgbcolor "#0000FF" ti ''
 
 #--------------------------------------------------------------------------------------------------
 
-set term postscript eps enhanced color 24 size 3in,4in
+set term postscript eps enhanced color 18 size 2in,3in
 set output 'filetag_Rtop.eps'
 
 set lmargin 6
@@ -117,14 +117,14 @@ plot \
 'filetag' index 1 us 2:8 w l lw 3 lc rgbcolor "#FF9999" ti '', \
 'filetag' index 2 us 2:8 w l lw 3 lc rgbcolor "#FF6666" ti '', \
 'filetag' index 3 us 2:8 w l lw 3 lc rgbcolor "#FF0000" ti '', \
-'filetag' index 0 us 2:11 w l lw 3 dt (20,10) lc rgbcolor "#CCCCFF" ti '', \
-'filetag' index 1 us 2:11 w l lw 3 dt (20,10) lc rgbcolor "#9999FF" ti '' , \
-'filetag' index 2 us 2:11 w l lw 3 dt (20,20) lc rgbcolor "#6666FF" ti '' , \
-'filetag' index 3 us 2:11 w l lw 3 dt (20,20) lc rgbcolor "#0000FF" ti '' 
+'filetag' index 0 us 2:11 w l lw 3 dt (10,5) lc rgbcolor "#CCCCFF" ti '', \
+'filetag' index 1 us 2:11 w l lw 3 dt (10,5) lc rgbcolor "#9999FF" ti '' , \
+'filetag' index 2 us 2:11 w l lw 3 dt (10,5) lc rgbcolor "#6666FF" ti '' , \
+'filetag' index 3 us 2:11 w l lw 3 dt (10,5) lc rgbcolor "#0000FF" ti '' 
 
 #--------------------------------------------------------------------------------------------------
 
-set term postscript eps enhanced color 24 size 3in,4in
+set term postscript eps enhanced color 18 size 2in,3in
 set output 'filetag_SS.eps'
 
 set lmargin 6
@@ -142,14 +142,14 @@ plot \
 'filetag' index 1 us 2:14 w l lw 3 lc rgbcolor "#FF9999" ti '', \
 'filetag' index 2 us 2:14 w l lw 3 lc rgbcolor "#FF6666" ti '', \
 'filetag' index 3 us 2:14 w l lw 3 lc rgbcolor "#FF0000" ti '', \
-'filetag' index 0 us 2:15 w l lw 3 dt (20,10) lc rgbcolor "#CCCCFF" ti '', \
-'filetag' index 1 us 2:15 w l lw 3 dt (20,10) lc rgbcolor "#9999FF" ti '' , \
-'filetag' index 2 us 2:15 w l lw 3 dt (20,20) lc rgbcolor "#6666FF" ti '' , \
-'filetag' index 3 us 2:15 w l lw 3 dt (20,20) lc rgbcolor "#0000FF" ti '' 
+'filetag' index 0 us 2:15 w l lw 3 dt (10,5) lc rgbcolor "#CCCCFF" ti '', \
+'filetag' index 1 us 2:15 w l lw 3 dt (10,5) lc rgbcolor "#9999FF" ti '' , \
+'filetag' index 2 us 2:15 w l lw 3 dt (10,5) lc rgbcolor "#6666FF" ti '' , \
+'filetag' index 3 us 2:15 w l lw 3 dt (10,5) lc rgbcolor "#0000FF" ti '' 
 
 #--------------------------------------------------------------------------------------------------
 
-set term postscript eps enhanced color 24 size 3in,4in
+set term postscript eps enhanced color 18 size 2in,3in
 set output 'filetag_SST.eps'
 
 set lmargin 6
@@ -166,14 +166,14 @@ plot \
 'filetag' index 1 us 2:3 w l lw 3 lc rgbcolor "#FF9999" ti '', \
 'filetag' index 2 us 2:3 w l lw 3 lc rgbcolor "#FF6666" ti '', \
 'filetag' index 3 us 2:3 w l lw 3 lc rgbcolor "#FF0000" ti '', \
-'filetag' index 0 us 2:4 w l lw 3 dt (20,10) lc rgbcolor "#CCCCFF" ti '', \
-'filetag' index 1 us 2:4 w l lw 3 dt (20,10) lc rgbcolor "#9999FF" ti '' , \
-'filetag' index 2 us 2:4 w l lw 3 dt (20,20) lc rgbcolor "#6666FF" ti '' , \
-'filetag' index 3 us 2:4 w l lw 3 dt (20,20) lc rgbcolor "#0000FF" ti '' 
+'filetag' index 0 us 2:4 w l lw 3 dt (10,5) lc rgbcolor "#CCCCFF" ti '', \
+'filetag' index 1 us 2:4 w l lw 3 dt (10,5) lc rgbcolor "#9999FF" ti '' , \
+'filetag' index 2 us 2:4 w l lw 3 dt (10,5) lc rgbcolor "#6666FF" ti '' , \
+'filetag' index 3 us 2:4 w l lw 3 dt (10,5) lc rgbcolor "#0000FF" ti '' 
 
 #--------------------------------------------------------------------------------------------------
 
-set term postscript eps enhanced color 24 size 3in,4in
+set term postscript eps enhanced color 18 size 2in,3in
 set output 'filetag_ztop.eps'
 
 set lmargin 6
