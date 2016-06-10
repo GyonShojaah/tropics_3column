@@ -85,26 +85,6 @@ def find_saturation_point( temp, pres, qq ):
     return t_sat, p_sat
 
 
-
-#--------------------------------------------------------
-def find_RHprof_linear_with_P_old( rh0, t0, z_layers, alpha ):
-    """
-    compute profile of relative humidity, assuming that it changes linearly with pressure
-    ****IT IS ONLY APPROXIMATION !!****
-    in Miller's code, after Manabe and Wetherald, (JAS,1967)
-         rh = rhs*(pm-0.02*psurf)/(psurf-0.02*psurf)
-     =>  rh = rhs*(pm/psurf - 0.02)/(0.98)
-     =>  rh = rhs*(12.5)*pm/psurf - rhs*0.25
-     => rh/rh0 = (12.5)*pm/psurf - ( ALPHA - 1. )
-    RH = RH0 - ALPHA * ( 1 - exp(-z/H) )
-    SH  = ( RR * temp )/( MU_atm * gg )
-    """
-    ScaleHeight = ( RR * t0 ) / ( MU_atm * gg )
-    rh_layers = rh0 * ( alpha * np.exp(-(z_layers-z_layers[0])/ScaleHeight) - ( alpha - 1. ) )
-    rh_layers[np.where( rh_layers < 0. )] = np.zeros( len(np.where( rh_layers < 0. )) )
-    return rh_layers
-
-
 #--------------------------------------------------------
 def find_RHprof_linear_with_P( rh0, p_layers, alpha ):
     """
