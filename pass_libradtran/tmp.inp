@@ -1,12 +1,12 @@
 data_files_path /Users/yuka/libRadtran-1.7/data/
-atmosphere_file pass_libradtran/atmfile_w.dat
+atmosphere_file pass_libradtran/atmfile_c.dat
 solar_file /Users/yuka/libRadtran-1.7/examples/UVSPEC_LOWTRAN_THERMAL.TRANS
-surface_temperature 308.0
+surface_temperature 303.15
 source thermal
 rte_solver disort2
 transmittance_wl_file /Users/yuka/libRadtran-1.7/examples/UVSPEC_LOWTRAN_THERMAL.TRANS
 correlated_k LOWTRAN
-zout 0.0 0.629214610961 19.0230118867
+zout 0.0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0 2.0 3.0 4.0 5.0 6.0 7.0 8.0 9.0 10.0 15.0 20.0 25.0 30.0
 output_user zout enet
 output integrate
 quiet

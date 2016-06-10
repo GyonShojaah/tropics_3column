@@ -3,10 +3,6 @@ import numpy as np
 from params import *
 from scipy.optimize import fsolve
 import errors
-from scipy.integrate import odeint
-from scipy.integrate import trapz
-import util_interp
-from copy import deepcopy
 
 #--------------------------------------------------------
 def CCpressure( temp ):
@@ -48,6 +44,7 @@ def find_s( T, z ):
     """
     compute dry static energy
     """
+#    print "c_p * T, gg * z", c_p * T, gg * z
     s = c_p * T + gg * z
     return s
 
@@ -123,6 +120,35 @@ def find_RHprof_linear_with_P( rh0, p_layers, alpha ):
     return rh_layers
 
 
+#--------------------------------------------------------
+def find_Tprof_moistadiabat_old( t0, p0, z_layers ):
+    """
+    temperature profile assuming moist adiabat
+    ****IT IS ONLY APPROXIMATION !!****
+    """
+    t_layers = np.zeros_like( z_layers ) + t0
+    z_layers_diff = np.diff( z_layers )
+    ScaleHeight = ( RR * t0 ) / ( MU_atm * gg )
+    p_layers = p0 * np.exp( ( z_layers[0] - z_layers )  / ScaleHeight )
+    epsilon = MU_H2O / MU_atm
+    l_strato = len( z_layers )
+    for ll in xrange( len(z_layers)-1 ): 
+#        mixing_ratio = CCpressure( t_layers[ll] ) / p_layers[ll]
+        mixing_ratio_mass = ( CCpressure( t_layers[ll] )*MU_H2O ) / ( p_layers[ll] * MU_atm )
+        fac1 = 1.  + ( LL * mixing_ratio_mass )/( Rs_dry * t_layers[ll] ) 
+        fac2 = c_p + ( LL**2 * mixing_ratio_mass * epsilon )/( Rs_dry * t_layers[ll]**2 )
+        dtdz = - ( fac1 / fac2 ) * gg
+        t_layers[ll+1] = t_layers[ll] + dtdz * z_layers_diff[ll]
+        dpdz =  - ( MU_atm * p_layers[ll] / ( RR * t_layers[ll] ) ) * gg
+        # correction
+        if ( t_layers[ll+1] < T_strato ):
+            t_layers[ll+1] = T_strato
+            if ( l_strato > ll + 1 ):
+                l_strato = ll + 1
+
+    return t_layers, p_layers, l_strato
+
+
 
 #--------------------------------------------------------
 def find_Tprof_moistadiabat( t0, p0, z_layers ):
@@ -130,52 +156,32 @@ def find_Tprof_moistadiabat( t0, p0, z_layers ):
     temperature profile assuming moist adiabat
     ****IT IS ONLY APPROXIMATION !!****
     """
+    t_layers = np.zeros_like( z_layers ) + t0
+    p_layers = np.zeros_like( z_layers ) + p0
 
-    def dTdP ( temp, pres ): 
+    z_layers_diff = np.diff( z_layers )
 
-        mixing_ratio_mass = ( CCpressure( temp )*MU_H2O ) / ( pres * MU_atm )
-        epsilon = MU_H2O / MU_atm
-        fac1 = 1.  + ( LL * mixing_ratio_mass )/( Rs_dry * temp ) 
-        fac2 = c_p + ( LL**2 * mixing_ratio_mass * epsilon )/( Rs_dry * temp**2 )
-        dTdz = - ( fac1 / fac2 ) * gg
-        dPdz = -1. * MU_atm * ( pres / ( RR * temp ) ) * gg
-        return dTdz / dPdz
-#        dlogPdz = -1. * MU_atm / ( RR * temp ) * gg
-#        return dTdz / dlogPdz
+    epsilon = MU_H2O / MU_atm
+    l_strato = len( z_layers )
+    for ll in xrange( len(z_layers)-1 ): 
+#        mixing_ratio = CCpressure( t_layers[ll] ) / p_layers[ll]
+        mixing_ratio_mass = ( CCpressure( t_layers[ll] )*MU_H2O ) / ( p_layers[ll] * MU_atm )
+        fac1 = 1.  + ( LL * mixing_ratio_mass )/( Rs_dry * t_layers[ll] ) 
+        fac2 = c_p + ( LL**2 * mixing_ratio_mass * epsilon )/( Rs_dry * t_layers[ll]**2 )
+        dtdz = - ( fac1 / fac2 ) * gg
+        t_layers[ll+1] = t_layers[ll] + dtdz * z_layers_diff[ll]
+        dpdz =  - ( MU_atm * p_layers[ll] / ( RR * t_layers[ll] ) ) * gg
 
-    p_tmp_layers = np.logspace( np.log10( p0 ), 0.1, 100 )
-    t_tmp_layers = odeint ( dTdP, t0, p_tmp_layers ).T[0]
+        ScaleHeight = ( RR * t_layers[ll] ) / ( MU_atm * gg )
+        p_layers[ll+1] = p_layers[ll] * np.exp( -1.0 * ( z_layers[ll+1] - z_layers[ll] )  / ScaleHeight )
 
-    dzdP_layers = -1.0 * RR * t_tmp_layers / ( MU_atm * p_tmp_layers * gg )
-    z_tmp_layers = np.zeros( len( t_tmp_layers ) ) + z_layers[0]
+        # correction
+        if ( t_layers[ll+1] < T_strato ):
+            t_layers[ll+1] = T_strato
+            if ( l_strato > ll + 1 ):
+                l_strato = ll + 1
 
-    for ii in xrange( 1, len( p_tmp_layers ) ):
-        z_tmp_layers[ii] = np.trapz ( dzdP_layers[:ii+1], x=p_tmp_layers[:ii+1] ) + z_layers[0]
-
-#    for zi in xrange( len( z_tmp_layers ) ):
-#        print z_tmp_layers[zi], t_tmp_layers[zi], p_tmp_layers[zi]
-
-    func_zofT = util_interp.interp_1d( t_tmp_layers[::-1], z_tmp_layers[::-1] )
-    z_strato = func_zofT ( T_strato )
-
-    func_pofT = util_interp.interp_1d( t_tmp_layers[::-1], p_tmp_layers[::-1] )
-    p_strato = func_pofT ( T_strato )
-
-    z_add = z_layers[ np.where( z_layers > z_strato ) ]
-    z_tmp2_layers =  np.r_[ z_tmp_layers[ np.where( z_tmp_layers <= z_strato ) ], z_add ]
-
-    t_tmp2_layers = np.r_[ t_tmp_layers[ np.where( t_tmp_layers >= T_strato ) ], np.tile( T_strato, len( z_add ) ) ]
-
-    SH = RR * T_strato / ( MU_atm * gg )
-    p_tmp2_layers = np.r_[ p_tmp_layers[ np.where( p_tmp_layers >= p_strato ) ], p_strato * np.exp( -1.0 * ( z_add - z_add[0] ) / SH ) ]
-
-    func_Tofz = util_interp.interp_1d( z_tmp2_layers, t_tmp2_layers, logx=False )
-    func_pofz = util_interp.interp_1d( z_tmp2_layers, p_tmp2_layers, logx=False )
-
-    t_layers = func_Tofz ( z_layers )
-    p_layers = func_pofz ( z_layers )
-
-    return t_layers, p_layers, z_strato, p_strato
+    return t_layers, p_layers, l_strato
 
 
 #--------------------------------------------------------
@@ -198,15 +204,15 @@ def find_Pprof( z_layers, t_layers, p0, tsurf ):
     """
     inv_t_layers = 1. / np.r_[ tsurf, t_layers ]
     z2_layers = np.r_[0., z_layers]
-    logP = np.zeros( len(z_layers) )
+    dlogP = np.zeros( len(z_layers) )
     for ll in xrange( len(z_layers) ):
-        logP[ll] = np.trapz( inv_t_layers[:ll+2], x=z2_layers[:ll+2] )
-    p_layers = p0 * np.exp( -1.0 *( MU_atm * gg / RR ) * logP ) 
+        dlogP[ll] = np.trapz( inv_t_layers[:ll+2], x=z2_layers[:ll+2] )
+    p_layers = p0 * np.exp( -1.0 *( MU_atm * gg / RR ) * dlogP ) 
     return p_layers    
 
 
 #--------------------------------------------------------
-def find_theta_e_old( temp, pres, qq ):
+def find_theta_e( temp, pres, qq ):
 
     theta = temp * ( P_surf / pres )**( 1./DELTA )
     t_sat, p_sat = find_saturation_point( temp, pres, qq )
@@ -215,29 +221,10 @@ def find_theta_e_old( temp, pres, qq ):
 
 
 #--------------------------------------------------------
-def find_T_from_theta_e_old( theta_e, pres, qq, t0 ):
+def find_T_from_theta_e( theta_e, pres, qq, t0 ):
 
     def nulfunc( temp ):
-        return find_theta_e_old( temp, pres, qq ) - theta_e
-    TT = fsolve( nulfunc, t0 )[0]
-    return TT
-
-
-#--------------------------------------------------------
-def find_theta_e( temp, pres ):
-
-    theta = temp * ( P_surf / pres )**( 1./DELTA )
-    p_sat = CCpressure( temp )
-    q_sat = p_sat * MU_H2O / ( pres * MU_atm )
-    theta_e = theta * np.exp( LL * q_sat / ( c_p * temp ) )
-    return theta_e
-
-
-#--------------------------------------------------------
-def find_T_from_theta_e( theta_e, pres, t0 ):
-
-    def nulfunc( temp ):
-        return find_theta_e( temp, pres ) - theta_e
+        return find_theta_e( temp, pres, qq ) - theta_e
     TT = fsolve( nulfunc, t0 )[0]
     return TT
 
@@ -247,8 +234,8 @@ def find_Tprof_TI( z_layers, p_layers, p0, p1, T0, T1, q0, q1, beta ):
 
     p_sat_layers = beta * ( p_layers - p_layers[0] ) + p_layers[0]
 
-    theta0_e = find_theta_e( T0, p0 )
-    theta1_e = find_theta_e( T1, p1 )
+    theta0_e = find_theta_e( T0, p0, q0 )
+    theta1_e = find_theta_e( T1, p1, q1 )
 
     t_layers = np.zeros( len(z_layers) )
     q_layers = np.zeros( len(z_layers) )
@@ -258,17 +245,17 @@ def find_Tprof_TI( z_layers, p_layers, p0, p1, T0, T1, q0, q1, beta ):
         def func( xx, p_sat ):
             theta_e = theta0_e * xx + theta1_e * ( 1. - xx )
             qq      = q0 * xx + q1 * ( 1. - xx )
-            temp1   = find_T_from_theta_e ( theta_e, p_layers[zi], T0 )
+            temp1   = find_T_from_theta_e( theta_e, p_layers[zi], qq, T0 )
             temp2   = inv_CCpressure( p_sat_layers[zi] * MU_atm * qq / MU_H2O )*( p_layers[zi] / p_sat_layers[zi] )**( 1./DELTA )
             return temp1 - temp2
 
         x_ans = fsolve( func, 1., args=p_sat_layers[zi] )[0]
 
 #        print "x_ans", x_ans
-#        print x_ans
+
         q_layers[zi] = q0 * x_ans + q1 * ( 1. - x_ans )
         theta_e = theta0_e * x_ans + theta1_e * ( 1. - x_ans )
-        t_layers[zi] = find_T_from_theta_e ( theta_e, p_layers[zi], T0 )
+        t_layers[zi] = find_T_from_theta_e( theta_e, p_layers[zi], q_layers[zi], T0 )
 
     return t_layers, q_layers
 
@@ -319,7 +306,7 @@ def find_M( R, s, qT, q_TI, F ):
     """
     M = ( R[1] - R[2] - F )/( ( s[1] + LL*qT ) - ( s[0] + LL*q_TI ) )
 #    print "s[1], LL*qT, s[0], LL*q_TI, denomi, numerator", s[1], LL*qT, s[0], LL*q_TI, ( s[1] + LL*qT ) - ( s[0] + LL*q_TI ), R[1] - R[2],
-#    print s[1], LL*qT, s[0], LL*q_TI, ( s[1] + LL*qT ) - ( s[0] + LL*q_TI ), R[1] - R[2],
+    print s[1], LL*qT, s[0], LL*q_TI, ( s[1] + LL*qT ) - ( s[0] + LL*q_TI ), R[1] - R[2],
     return M
 
 

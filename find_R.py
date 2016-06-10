@@ -8,9 +8,9 @@ from cloud import *
 import mks as unit
 import sys
 
-N_LAYER = 1000
+N_LAYER = 299
 N_POOL  = 2
-zz_layers = np.r_[ 0.0, np.logspace(-1, np.log10(30), N_LAYER)[:-1] * 1e3 ]
+zz_layers = np.r_[ 0.0, np.logspace(-1, np.log10(60), N_LAYER)[:-1] * 1e3 ]
 
 # Variables
 MM        = np.zeros([N_POOL])
@@ -183,7 +183,6 @@ def find_R( sst_in, qq_TI_c, aa_w, verbose=False ):
 #    if ( verbose == True ):
 #        for ii in xrange( N_LAYER ):
 #            print zz_layers[ii]*1e-3, TT_layers[0][ii], TT_layers[1][ii], qq_layers[0][ii]*1e3, qq_layers[1][ii]*1e3
-
 
     RR = rad_drv.get_R( SST, zz_satur, zz_layers[l_strato], zz_layers, TT_layers, PP_layers, qq_layers, MU_atm, MU_H2O, SOL, FACTOR, ALBEDO )
 #    RR = rad_drv.get_R( SST, l_satur, l_strato, zz_layers, TT_layers, PP_layers, qq_layers, MU_atm, MU_H2O, FACTOR_W, FACTOR_C )

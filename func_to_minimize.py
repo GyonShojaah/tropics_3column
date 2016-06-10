@@ -14,7 +14,7 @@ import sys
 
 #zz_layers = np.r_[ 0.0, np.logspace(-1, np.log10(50), N_LAYER)[:-1] * 1e3 ]
 #zz_layers = np.linspace(0., 30, N_LAYER) * 1e3
-N_LAYER = 255
+N_LAYER = 247
 
 #zz_layers = np.r_[ 50.0, np.logspace(-1, np.log10(60), N_LAYER)[:-1] * 1e3 ]
 
@@ -53,8 +53,6 @@ def myfunc( sst_in, qq_TI_c, aa_w, verbose, outfile ):
     LF_m_q    = LF_m_q_0/aa_c  # W m^-2
     FF_m_q    = LF_m_q/LL   # W m^-2
 
-
-
     #----------------------------------------------------
     # step 1: SST([N_POOL]) is passed
     #         temperature at the bottom of atmosphere is specified.
@@ -78,7 +76,7 @@ def myfunc( sst_in, qq_TI_c, aa_w, verbose, outfile ):
         zz_satur[pool] = find_saturation_level( Tsurf[pool], 
                                                 qq_layers[pool][0] )
 
-    zz_layers = np.r_[ np.linspace ( 0., zz_satur[1], 20 )[:-1], np.linspace( zz_satur[1], zz_satur[0], 10 )[:-1], np.linspace( zz_satur[0], zz_TI_btm[1], 30 )[:-1], np.linspace( zz_TI_btm[1], zz_TI_tp[1], 20 )[:-1], np.linspace( zz_TI_tp[1], zz_TI_btm[0], 20 )[:-1], np.linspace( zz_TI_btm[0], zz_TI_tp[0], 20 )[:-1], np.linspace( zz_TI_tp[0], 60000, 141 ) ]
+    zz_layers = np.r_[ np.linspace ( 0., zz_satur[1], 21 )[1:-1], np.linspace( zz_satur[1], zz_satur[0], 2 )[:-1], np.linspace( zz_satur[0], zz_TI_btm[1], 30 )[:-1], np.linspace( zz_TI_btm[1], zz_TI_tp[1], 20 )[:-1], np.linspace( zz_TI_tp[1], zz_TI_btm[0], 20 )[:-1], np.linspace( zz_TI_btm[0], zz_TI_tp[0], 20 )[:-1], np.linspace( zz_TI_tp[0], 60000, 141 ) ]
 
 #        l_satur[pool]  = np.where( zz_layers > zz_satur[pool] )[0][0]
     for pool in xrange(2):
@@ -94,8 +92,6 @@ def myfunc( sst_in, qq_TI_c, aa_w, verbose, outfile ):
     l_TI_btm[1] = np.argmin( abs( zz_layers - zz_TI_btm[1] ) )
     l_TI_tp[0]  = np.argmin( abs( zz_layers - zz_TI_tp[0]  ) )
     l_TI_tp[1]  = np.argmin( abs( zz_layers - zz_TI_tp[1]  ) )
-
-
 
     #----------------------------------------------------
     # step 4: find T profiles below the saturation level
@@ -122,10 +118,9 @@ def myfunc( sst_in, qq_TI_c, aa_w, verbose, outfile ):
     #           and also find the tropopause  
     #----------------------------------------------------
     pool = 0 # warm pool
-    # approximation HERE!!!!!!!!!
     TT_layers[pool][l_satur[pool]:], PP_layers[pool][l_satur[pool]:], zz_strato, p_strato = find_Tprof_moistadiabat( TT_layers[pool][l_satur[pool]], 
-                                                                                                                    PP_layers[pool][l_satur[pool]], 
-                                                                                                                    zz_layers[l_satur[pool]:] )
+                                                                                                                     PP_layers[pool][l_satur[pool]], 
+                                                                                                                     zz_layers[l_satur[pool]:] )
 
     l_strato = np.argmin( abs( zz_layers - zz_strato ) )
 
@@ -172,7 +167,7 @@ def myfunc( sst_in, qq_TI_c, aa_w, verbose, outfile ):
     #----------------------------------------------------
     for pool in xrange(2):
 
-#        print "z_B, z_TI," , zz_layers[l_satur[pool]], zz_layers[l_TI_tp[pool]]
+        #        print "z_B, z_TI," , zz_layers[l_satur[pool]], zz_layers[l_TI_tp[pool]]
         TT_layers[pool][l_satur[pool]:l_TI_btm[pool]+1], qq_layers[pool][l_satur[pool]:l_TI_btm[pool]+1] = find_Tprof_TI( zz_layers[l_satur[pool]:l_TI_btm[pool]+1], 
                                                                                                                           PP_layers[pool][l_satur[pool]:l_TI_btm[pool]+1], 
                                                                                                                           PP_layers[pool][l_satur[pool]], 
@@ -204,6 +199,7 @@ def myfunc( sst_in, qq_TI_c, aa_w, verbose, outfile ):
 
 #    for zi in xrange ( len( zz_layers ) ):
 #        print zz_layers[zi], PP_layers[0][zi], PP_layers[1][zi], TT_layers[0][zi], TT_layers[1][zi], qq_layers[0][zi], qq_layers[1][zi]
+#    sys.exit()
 
     RR = rad_drv.get_R( SST, zz_satur, zz_strato, zz_layers, TT_layers, PP_layers, qq_layers, MU_atm, MU_H2O, SOL, FACTOR, ALBEDO )
 

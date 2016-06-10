@@ -36,11 +36,11 @@ SST = np.array( [ 38.0261339428 + 273.15,  np.sqrt( 38.0261339428 - 37.074256920
 if __name__ == "__main__":
 
     
-    aw_array = [0.33, 0.4, 0.5, 0.67]
-    qq_array = [2e-3, 4e-3, 6e-3, 8e-3]
+#    aw_array = [0.33, 0.4, 0.5, 0.67]
+#    qq_array = [2e-3, 4e-3, 6e-3, 8e-3]
 
-#    aa_w = 0.33
-#    qq_TI_c = 4e-3
+    aw_array = np.array( [0.33] )
+    qq_array = np.array( [8e-3] )
 
     
     with open( OUTPUTFILE, 'w') as f:

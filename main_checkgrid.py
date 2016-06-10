@@ -22,7 +22,7 @@ import sys
 #SST0 = np.array([ 293., 290.]) 
 
 
-OUTPUTFILE = "checkgrid_aw0.67_qTIc4"
+OUTPUTFILE = "checkgrid_aw0.33_qTIc2"
 #OUTPUTFILE = "outputfile"
 
 SST = np.array( [ 39. + 273.15, np.sqrt( 39. - 37. ) ] )
@@ -37,14 +37,16 @@ if __name__ == "__main__":
 
     
 #    aw_array = [0.33, 0.4, 0.5, 0.67]
-#    qq_array = [2e-3, 4e-3, 6e-3, 8e-3]
+#    qq_array = [2e-3, 4e-3, 6e-3, 8e-3
 
-    aa_w = 0.67
-    qq_TI_c = 4e-3
+    aa_w = 0.33
+    qq_TI_c = 2e-3
     
-    sst_w   = np.linspace( 25., 40., 20 ) + 273.15
+    sst_w   = np.linspace( 25., 45., 20 ) + 273.15
     sst_dif = np.linspace( np.sqrt(0.1), np.sqrt(10.), 20 )
 
+#    sst_w = np.array( [ 30. + 273.15 ] )
+#    sst_dif = np.array( [ 1. ] )
 #    print sst_dif
 #    sys.exit()
 

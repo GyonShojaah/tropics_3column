@@ -1,25 +1,25 @@
 #--------------------------------------------------------------------------------------------------
 
 set term postscript eps enhanced color 24 size 3in,4in
-set output 'filetag_LatentHeatFlux.eps'
+set output 'filetag_residual.eps'
 
 set lmargin 6
 set rmargin 2
 set bmargin 4
 set tmargin 4
 
-set title "Latent Heat Flux [W/m^2]"
-#set ylabel "Latent Heat Flux [W/m^2]"
+set title "Residual [W/m^2]"
 
 set xrange [0:10]
-set xlabel 'q_{TI} [g/kg]' 
 plot \
-'filetag' index 0 us 2:15 w l lw 3 lc rgbcolor "#FFCCCC" ti '', \
-'filetag' index 1 us 2:15 w l lw 3 lc rgbcolor "#FF6666" ti '', \
-'filetag' index 2 us 2:15 w l lw 3 lc rgbcolor "#FF0000" ti '', \
-'filetag' index 0 us 2:16 w l lw 3 dt (20,10) lc rgbcolor "#CCCCFF" ti '', \
-'filetag' index 1 us 2:16 w l lw 3 dt (20,10) lc rgbcolor "#6666FF" ti '' , \
-'filetag' index 2 us 2:16 w l lw 3 dt (20,20) lc rgbcolor "#0000FF" ti '' 
+'filetag' index 0 us 2:18 w l lw 3 lc rgbcolor "#FFCCCC" ti '', \
+'filetag' index 1 us 2:18 w l lw 3 lc rgbcolor "#FF9999" ti '', \
+'filetag' index 2 us 2:18 w l lw 3 lc rgbcolor "#FF6666" ti '', \
+'filetag' index 3 us 2:18 w l lw 3 lc rgbcolor "#FF0000" ti '', \
+'filetag' index 0 us 2:19 w l lw 3 dt (20,10) lc rgbcolor "#CCCCFF" ti '', \
+'filetag' index 1 us 2:19 w l lw 3 dt (20,10) lc rgbcolor "#9999FF" ti '' , \
+'filetag' index 2 us 2:19 w l lw 3 dt (20,20) lc rgbcolor "#6666FF" ti '' , \
+'filetag' index 3 us 2:19 w l lw 3 dt (20,20) lc rgbcolor "#0000FF" ti '' 
 
 #--------------------------------------------------------------------------------------------------
 
@@ -36,12 +36,39 @@ set title "Mass Flux"
 
 set xrange [0:10]
 plot \
-'filetag' index 0 us 2:11 w l lw 3 lc rgbcolor "#FFCCCC" ti '', \
-'filetag' index 1 us 2:11 w l lw 3 lc rgbcolor "#FF6666" ti '', \
-'filetag' index 2 us 2:11 w l lw 3 lc rgbcolor "#FF0000" ti '', \
-'filetag' index 0 us 2:12 w l lw 3 dt (20,10) lc rgbcolor "#CCCCFF" ti '', \
-'filetag' index 1 us 2:12 w l lw 3 dt (20,10) lc rgbcolor "#6666FF" ti '' , \
-'filetag' index 2 us 2:12 w l lw 3 dt (20,20) lc rgbcolor "#0000FF" ti '' 
+'filetag' index 0 us 2:12 w l lw 3 lc rgbcolor "#FFCCCC" ti '', \
+'filetag' index 1 us 2:12 w l lw 3 lc rgbcolor "#FF9999" ti '', \
+'filetag' index 2 us 2:12 w l lw 3 lc rgbcolor "#FF6666" ti '', \
+'filetag' index 3 us 2:12 w l lw 3 lc rgbcolor "#FF0000" ti '', \
+'filetag' index 0 us 2:13 w l lw 3 dt (20,10) lc rgbcolor "#CCCCFF" ti '', \
+'filetag' index 1 us 2:13 w l lw 3 dt (20,10) lc rgbcolor "#9999FF" ti '' , \
+'filetag' index 2 us 2:13 w l lw 3 dt (20,20) lc rgbcolor "#6666FF" ti '' , \
+'filetag' index 3 us 2:13 w l lw 3 dt (20,20) lc rgbcolor "#0000FF" ti '' 
+
+#--------------------------------------------------------------------------------------------------
+set term postscript eps enhanced color 24 size 3in,4in
+set output 'filetag_LatentHeatFlux.eps'
+
+set lmargin 6
+set rmargin 2
+set bmargin 4
+set tmargin 4
+
+set title "Latent Heat Flux [W/m^2]"
+#set ylabel "Latent Heat Flux [W/m^2]"
+
+set xrange [0:10]
+set yrange [100:200]
+set xlabel 'q_{TI} [g/kg]' 
+plot \
+'filetag' index 0 us 2:16 w l lw 3 lc rgbcolor "#FFCCCC" ti '', \
+'filetag' index 1 us 2:16 w l lw 3 lc rgbcolor "#FF9999" ti '', \
+'filetag' index 2 us 2:16 w l lw 3 lc rgbcolor "#FF6666" ti '', \
+'filetag' index 3 us 2:16 w l lw 3 lc rgbcolor "#FF0000" ti '', \
+'filetag' index 0 us 2:17 w l lw 3 dt (20,10) lc rgbcolor "#CCCCFF" ti '', \
+'filetag' index 1 us 2:17 w l lw 3 dt (20,10) lc rgbcolor "#9999FF" ti '' , \
+'filetag' index 2 us 2:17 w l lw 3 dt (20,20) lc rgbcolor "#6666FF" ti '' , \
+'filetag' index 3 us 2:17 w l lw 3 dt (20,20) lc rgbcolor "#0000FF" ti '' 
 
 #--------------------------------------------------------------------------------------------------
 
@@ -58,13 +85,16 @@ set title  "Radiation at Surface [W/m^2]"
 
 set xrange [0:10]
 set xlabel 'q_{TI} [g/kg]' 
+set yrange [160:220]
 plot \
-'filetag' index 0 us 2:5 w l lw 3 lc rgbcolor "#FFCCCC" ti '', \
-'filetag' index 1 us 2:5 w l lw 3 lc rgbcolor "#FF6666" ti '', \
-'filetag' index 2 us 2:5 w l lw 3 lc rgbcolor "#FF0000" ti '', \
-'filetag' index 0 us 2:8 w l lw 3 dt (20,10) lc rgbcolor "#CCCCFF" ti '', \
-'filetag' index 1 us 2:8 w l lw 3 dt (20,10) lc rgbcolor "#6666FF" ti '' , \
-'filetag' index 2 us 2:8 w l lw 3 dt (20,20) lc rgbcolor "#0000FF" ti '' 
+'filetag' index 0 us 2:6 w l lw 3 lc rgbcolor "#FFCCCC" ti '', \
+'filetag' index 1 us 2:6 w l lw 3 lc rgbcolor "#FF9999" ti '', \
+'filetag' index 2 us 2:6 w l lw 3 lc rgbcolor "#FF6666" ti '', \
+'filetag' index 3 us 2:6 w l lw 3 lc rgbcolor "#FF0000" ti '', \
+'filetag' index 0 us 2:9 w l lw 3 dt (20,10) lc rgbcolor "#CCCCFF" ti '', \
+'filetag' index 1 us 2:9 w l lw 3 dt (20,10) lc rgbcolor "#9999FF" ti '' , \
+'filetag' index 2 us 2:9 w l lw 3 dt (20,20) lc rgbcolor "#6666FF" ti '' , \
+'filetag' index 3 us 2:9 w l lw 3 dt (20,20) lc rgbcolor "#0000FF" ti ''
 
 #--------------------------------------------------------------------------------------------------
 
@@ -81,13 +111,16 @@ set title  "Radiation at z_T [W/m^2]"
 
 set xrange [0:10]
 set xlabel 'q_{TI} [g/kg]' 
+set yrange [-20:80]
 plot \
-'filetag' index 0 us 2:7 w l lw 3 lc rgbcolor "#FFCCCC" ti '', \
-'filetag' index 1 us 2:7 w l lw 3 lc rgbcolor "#FF6666" ti '', \
-'filetag' index 2 us 2:7 w l lw 3 lc rgbcolor "#FF0000" ti '', \
-'filetag' index 0 us 2:10 w l lw 3 dt (20,10) lc rgbcolor "#CCCCFF" ti '', \
-'filetag' index 1 us 2:10 w l lw 3 dt (20,10) lc rgbcolor "#6666FF" ti '' , \
-'filetag' index 2 us 2:10 w l lw 3 dt (20,20) lc rgbcolor "#0000FF" ti '' 
+'filetag' index 0 us 2:8 w l lw 3 lc rgbcolor "#FFCCCC" ti '', \
+'filetag' index 1 us 2:8 w l lw 3 lc rgbcolor "#FF9999" ti '', \
+'filetag' index 2 us 2:8 w l lw 3 lc rgbcolor "#FF6666" ti '', \
+'filetag' index 3 us 2:8 w l lw 3 lc rgbcolor "#FF0000" ti '', \
+'filetag' index 0 us 2:11 w l lw 3 dt (20,10) lc rgbcolor "#CCCCFF" ti '', \
+'filetag' index 1 us 2:11 w l lw 3 dt (20,10) lc rgbcolor "#9999FF" ti '' , \
+'filetag' index 2 us 2:11 w l lw 3 dt (20,20) lc rgbcolor "#6666FF" ti '' , \
+'filetag' index 3 us 2:11 w l lw 3 dt (20,20) lc rgbcolor "#0000FF" ti '' 
 
 #--------------------------------------------------------------------------------------------------
 
@@ -103,13 +136,16 @@ set title  "Sensible Heat Flux [Wm^{-2}]"
 #set ylabel "Sensible Heat Flux [Wm^{-2}]"
 
 set xrange [0:10]
+set yrange [5:30]
 plot \
-'filetag' index 0 us 2:13 w l lw 3 lc rgbcolor "#FFCCCC" ti '', \
-'filetag' index 1 us 2:13 w l lw 3 lc rgbcolor "#FF6666" ti '', \
-'filetag' index 2 us 2:13 w l lw 3 lc rgbcolor "#FF0000" ti '', \
-'filetag' index 0 us 2:14 w l lw 3 dt (20,10) lc rgbcolor "#CCCCFF" ti '', \
-'filetag' index 1 us 2:14 w l lw 3 dt (20,10) lc rgbcolor "#6666FF" ti '' , \
-'filetag' index 2 us 2:14 w l lw 3 dt (20,20) lc rgbcolor "#0000FF" ti '' 
+'filetag' index 0 us 2:14 w l lw 3 lc rgbcolor "#FFCCCC" ti '', \
+'filetag' index 1 us 2:14 w l lw 3 lc rgbcolor "#FF9999" ti '', \
+'filetag' index 2 us 2:14 w l lw 3 lc rgbcolor "#FF6666" ti '', \
+'filetag' index 3 us 2:14 w l lw 3 lc rgbcolor "#FF0000" ti '', \
+'filetag' index 0 us 2:15 w l lw 3 dt (20,10) lc rgbcolor "#CCCCFF" ti '', \
+'filetag' index 1 us 2:15 w l lw 3 dt (20,10) lc rgbcolor "#9999FF" ti '' , \
+'filetag' index 2 us 2:15 w l lw 3 dt (20,20) lc rgbcolor "#6666FF" ti '' , \
+'filetag' index 3 us 2:15 w l lw 3 dt (20,20) lc rgbcolor "#0000FF" ti '' 
 
 #--------------------------------------------------------------------------------------------------
 
@@ -122,80 +158,18 @@ set bmargin 4
 set tmargin 4
 
 set title "SST [C]"
-#set ylabel "SST [C]"
+set yrange [25:45]
 
 set xrange [0:10]
 plot \
-'filetag' index 0 us 2:($3-273.15) w l lw 3 lc rgbcolor "#FFCCCC" ti '', \
-'filetag' index 1 us 2:($3-273.15) w l lw 3 lc rgbcolor "#FF6666" ti '', \
-'filetag' index 2 us 2:($3-273.15) w l lw 3 lc rgbcolor "#FF0000" ti '', \
-'filetag' index 0 us 2:($4-273.15) w l lw 3 dt (20,10) lc rgbcolor "#CCCCFF" ti '', \
-'filetag' index 1 us 2:($4-273.15) w l lw 3 dt (20,10) lc rgbcolor "#6666FF" ti '' , \
-'filetag' index 2 us 2:($4-273.15) w l lw 3 dt (20,20) lc rgbcolor "#0000FF" ti '' 
-
-#--------------------------------------------------------------------------------------------------
-
-set term postscript eps enhanced color 24 size 3in,4in
-set output 'filetag_residual.eps'
-
-set lmargin 6
-set rmargin 2
-set bmargin 4
-set tmargin 4
-
-set title "Residual [W/m^2]"
-
-set xrange [0:10]
-plot \
-'filetag' index 0 us 2:18 w l lw 3 lc rgbcolor "#FFCCCC" ti '', \
-'filetag' index 1 us 2:18 w l lw 3 lc rgbcolor "#FF6666" ti '', \
-'filetag' index 2 us 2:18 w l lw 3 lc rgbcolor "#FF0000" ti '', \
-'filetag' index 0 us 2:19 w l lw 3 dt (20,10) lc rgbcolor "#CCCCFF" ti '', \
-'filetag' index 1 us 2:19 w l lw 3 dt (20,10) lc rgbcolor "#6666FF" ti '' , \
-'filetag' index 2 us 2:19 w l lw 3 dt (20,20) lc rgbcolor "#0000FF" ti '' 
-
-#--------------------------------------------------------------------------------------------------
-
-set term postscript eps enhanced color 24 size 3in,4in
-set output 'filetag_residual.eps'
-
-set lmargin 6
-set rmargin 2
-set bmargin 4
-set tmargin 4
-
-set title "Residual [W/m^2]"
-
-set xrange [0:10]
-plot \
-'filetag' index 0 us 2:18 w l lw 3 lc rgbcolor "#FFCCCC" ti '', \
-'filetag' index 1 us 2:18 w l lw 3 lc rgbcolor "#FF6666" ti '', \
-'filetag' index 2 us 2:18 w l lw 3 lc rgbcolor "#FF0000" ti '', \
-'filetag' index 0 us 2:19 w l lw 3 dt (20,10) lc rgbcolor "#CCCCFF" ti '', \
-'filetag' index 1 us 2:19 w l lw 3 dt (20,10) lc rgbcolor "#6666FF" ti '' , \
-'filetag' index 2 us 2:19 w l lw 3 dt (20,20) lc rgbcolor "#0000FF" ti '' 
-
-#--------------------------------------------------------------------------------------------------
-
-set term postscript eps enhanced color 24 size 3in,4in
-set output 'filetag_MM.eps'
-
-set lmargin 6
-set rmargin 2
-set bmargin 4
-set tmargin 4
-
-set title "Mass Flux"
-#set ylabel "Mass Flux"
-
-set xrange [0:10]
-plot \
-'filetag' index 0 us 2:11 w l lw 3 lc rgbcolor "#FFCCCC" ti '', \
-'filetag' index 1 us 2:11 w l lw 3 lc rgbcolor "#FF6666" ti '', \
-'filetag' index 2 us 2:11 w l lw 3 lc rgbcolor "#FF0000" ti '', \
-'filetag' index 0 us 2:12 w l lw 3 dt (20,10) lc rgbcolor "#CCCCFF" ti '', \
-'filetag' index 1 us 2:12 w l lw 3 dt (20,10) lc rgbcolor "#6666FF" ti '' , \
-'filetag' index 2 us 2:12 w l lw 3 dt (20,20) lc rgbcolor "#0000FF" ti '' 
+'filetag' index 0 us 2:3 w l lw 3 lc rgbcolor "#FFCCCC" ti '', \
+'filetag' index 1 us 2:3 w l lw 3 lc rgbcolor "#FF9999" ti '', \
+'filetag' index 2 us 2:3 w l lw 3 lc rgbcolor "#FF6666" ti '', \
+'filetag' index 3 us 2:3 w l lw 3 lc rgbcolor "#FF0000" ti '', \
+'filetag' index 0 us 2:4 w l lw 3 dt (20,10) lc rgbcolor "#CCCCFF" ti '', \
+'filetag' index 1 us 2:4 w l lw 3 dt (20,10) lc rgbcolor "#9999FF" ti '' , \
+'filetag' index 2 us 2:4 w l lw 3 dt (20,20) lc rgbcolor "#6666FF" ti '' , \
+'filetag' index 3 us 2:4 w l lw 3 dt (20,20) lc rgbcolor "#0000FF" ti '' 
 
 #--------------------------------------------------------------------------------------------------
 
@@ -210,8 +184,11 @@ set tmargin 4
 set title "z_{top} [km]"
 
 set xrange [0:10]
+set yrange [14:18]
+
 plot \
-'filetag' index 0 us 2:($17*1e-3) w l lw 3 lc rgbcolor "#CCCCCC" ti '', \
-'filetag' index 1 us 2:($17*1e-3) w l lw 3 lc rgbcolor "#666666" ti '', \
-'filetag' index 2 us 2:($17*1e-3) w l lw 3 lc rgbcolor "#000000" ti '', \
+'filetag' index 0 us 2:5 w l lw 3 lc rgbcolor "#CCCCCC" ti '', \
+'filetag' index 1 us 2:5 w l lw 3 lc rgbcolor "#999999" ti '', \
+'filetag' index 2 us 2:5 w l lw 3 lc rgbcolor "#666666" ti '', \
+'filetag' index 3 us 2:5 w l lw 3 lc rgbcolor "#000000" ti '', \
 

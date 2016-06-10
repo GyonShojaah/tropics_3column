@@ -4,7 +4,8 @@ import numpy as np
 #FACTOR = np.array( [ (0.98/np.pi), (0.98/np.pi) ] )
 #FACTOR = np.array( [ (1.032/np.pi), (0.98/np.pi) ] )
 #FACTOR = np.array( [ (1./np.pi), (1./np.pi) ] )
-FACTOR = np.array( [ (1./np.pi), (1./np.pi) ] )
+#FACTOR = np.array( [ (1./np.pi), (1./np.pi) ] )
+FACTOR = np.array( [ (0.93/np.pi), (0.92/np.pi) ] )
 
 SOL      = 1360.6718     # W/m^2
 ALBEDO   = 0.05
@@ -18,7 +19,8 @@ ALBEDO   = 0.05
 RH_surf = 0.75
 RR      = constants.R    
 Rs_dry  = 287.0          # J kg^-1 K^-1
-LL      = 2.26476e6      # J kg^-1 
+#LL      = 2.26476e6      # J kg^-1 
+LL      = 2.50e6      # J kg^-1 
 c_p     = 1.006e3        # J kg^-1 K^-1
 
 #---------------------------------
