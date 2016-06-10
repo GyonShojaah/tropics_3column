@@ -1,16 +1,12 @@
 from scipy import constants
 import numpy as np
 
-#FACTOR = np.array( [ (0.98/np.pi), (0.98/np.pi) ] )
-#FACTOR = np.array( [ (1.032/np.pi), (0.98/np.pi) ] )
-#FACTOR = np.array( [ (1./np.pi), (1./np.pi) ] )
-#FACTOR = np.array( [ (1./np.pi), (1./np.pi) ] )
+OUTPUTFILE = "survey_F0.93-0.92_2"
 FACTOR = np.array( [ (0.93/np.pi), (0.92/np.pi) ] )
 
+SST0 = np.array( [ 40. + 273.15, np.sqrt( 1. ) ] )
 SOL      = 1360.6718     # W/m^2
 ALBEDO   = 0.05
-#FACTOR1 = (0.8/np.pi)
-#FACTOR1 = (1.0/np.pi)
 
 
 #---------------------------------
@@ -27,7 +23,6 @@ c_p     = 1.006e3        # J kg^-1 K^-1
 # Planetary Parameters
 #---------------------------------
 P_surf   = 0.98e5      # Pa
-#P_surf   = 9.882964e4     # Pa
 gg       = constants.g  # 
 MU_H2O   = 18.0e-3      # kg
 MU_atm   = 28.8e-3      # kg
@@ -42,11 +37,9 @@ DELTA    = ( GAMMA / ( GAMMA-1. ) ) # P/P0 = (T/T0)**DELTA for dry adiabat
 dT_surf  = 1.           # K ( Miller's paper )
 ALPHA    = 1.02         
 BETA     = 1.2          # index for mixing
-#BETA     = 1.05          # index for mixing
-#BETA     = 1.6          # index for mixing
-zz_TI_tp = np.array([2000.0, 1500.0])       # m
+zz_TI_top = np.array([2000.0, 1500.0])       # m
 delta_zz_TI = 200. # m
-zz_TI_btm = zz_TI_tp - delta_zz_TI
+zz_TI_btm = zz_TI_top - delta_zz_TI
 
 
 #---------------------------------
@@ -60,12 +53,10 @@ dR_w_satur = -27.
 #---------------------------------
 # Divergence
 #---------------------------------
-FF_o_w    = -23.6       # W m^-2
-FF_o_c    = -23.6       # W m^-2
+FF_o_w    = -23.6  # W m^-2
+FF_o_c    = -23.6  # W m^-2
 FF_m_s_0  = -8.6   # W m^-2
-##FF_m_s_0  = 8.6   # W m^-2
 LF_m_q_0  = -10.2  # W m^-2
-
 
 
 #---------------------------------

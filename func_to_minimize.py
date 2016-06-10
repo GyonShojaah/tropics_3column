@@ -19,6 +19,7 @@ SS        = np.zeros([N_POOL])
 # Supportive Variables
 ll       = np.zeros([N_POOL])
 ss       = np.zeros([N_POOL,2])
+qq       = np.zeros([N_POOL,2])
 zz_satur = np.zeros([N_POOL])
 l_satur  = np.zeros([N_POOL])
 l_TI_btm = np.zeros([N_POOL])
@@ -48,14 +49,14 @@ def myfunc( sst_in, qq_TI_c, aa_w, verbose, outfile ):
     #----------------------------------------------------
     # step 2: compute statistic energy at the bottom
     #----------------------------------------------------
-    qq_layers.T[0] = rh2q( Tsurf, P_surf, RH_surf )
-    ss.T[0]        = find_s( Tsurf, 0. )
+    qq.T[0] = rh2q( Tsurf, P_surf, RH_surf )
+    ss.T[0] = find_s( Tsurf, 0. )
 
     #----------------------------------------------------
     # step 3: find saturation level
     #----------------------------------------------------
     for pool in xrange(2):
-        zz_satur[pool] = find_saturation_level( Tsurf[pool], qq_layers[pool][0] )
+        zz_satur[pool] = find_saturation_level( Tsurf[pool], qq[pool][0] )
 
     #----------------------------------------------------
     # step 4: set up altitude grid
@@ -77,7 +78,7 @@ def myfunc( sst_in, qq_TI_c, aa_w, verbose, outfile ):
     #----------------------------------------------------
     N_LAYER = len( zz_layers )
     #---------------
-    if num % 2 == 0 ):
+    if ( N_LAYER % 2 == 0 ):
         print 'ERROR! Set odd number of grids'
         sys.exit()
     #---------------
@@ -92,7 +93,7 @@ def myfunc( sst_in, qq_TI_c, aa_w, verbose, outfile ):
     # temperature, specific humidity
     for pool in xrange(2):
         TT_layers[pool][:l_satur[pool]+1] = find_Tprof_dryadiabat( Tsurf[pool], zz_layers[:l_satur[pool]+1] )
-        qq_layers[pool] = np.tile( qq_layers[pool][0], N_LAYER )
+        qq_layers[pool] = np.tile( qq[pool][0], N_LAYER )
     # pressure
     pool = 0 # warm pool
     PP_layers[pool][:l_satur[pool]+1] = find_Pprof( zz_layers[:l_satur[pool]+1], TT_layers[pool][:l_satur[pool]+1], P_surf, Tsurf[pool] )
@@ -122,9 +123,9 @@ def myfunc( sst_in, qq_TI_c, aa_w, verbose, outfile ):
     # step 10: specific humidity and static energy 
     #          above tropopause (it is saturated there!)
     #----------------------------------------------------
-    qT = rh2q( T_strato, pp_strato, 1.0 )
+    qq.T[1] = np.tile( rh2q( T_strato, pp_strato, 1.0 ), 2 )
     for pool in xrange(2):
-        qq_layers[pool][l_strato:] = np.tile( qT, N_LAYER - l_strato )
+        qq_layers[pool][l_strato:] = np.tile( qq[pool][1], N_LAYER - l_strato )
         ss[pool][1] = find_s( T_strato, zz_strato )
 
 
@@ -175,8 +176,8 @@ def myfunc( sst_in, qq_TI_c, aa_w, verbose, outfile ):
     # step 15: obtain Mw and Mc
     #----------------------------------------------------
     qq_TI_w = qq_layers[0][l_TI_top[0]]
-    MM[0] = find_M( RR[0], ss[0], qT, qq_TI_w, 0. )
-    MM[1] = find_M( RR[1], ss[1], qT, qq_TI_c, FF_m_s )
+    MM[0] = find_M( RR[0], ss[0], qq[0][1], qq_TI_w, 0. )
+    MM[1] = find_M( RR[1], ss[1], qq[1][1], qq_TI_c, FF_m_s )
 
     #----------------------------------------------------
     # step 16: obtain Sw and Sc

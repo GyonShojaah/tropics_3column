@@ -6,15 +6,6 @@ import numpy as np
 from params import *
 import func_to_minimize as func_to_minimize
 
-#FACTOR = np.array( [ (1./np.pi), (1./np.pi) ] )
-OUTPUTFILE = "survey_F0.93-0.92"
-#OUTPUTFILE = "survey_test0"
-
-SST0 = np.array( [ 40. + 273.15, np.sqrt( 1. ) ] )
-#SST0 = np.array([ 300.0, 1.0])
-#SST0 = np.array([ 293., 290.]) 
-
-
 
 #=============================================================================
 # main
